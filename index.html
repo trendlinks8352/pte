@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Master — 230 Sentences</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --border: #2a2a3a;
+    --accent: #7c6aff;
+    --accent2: #ff6a9e;
+    --accent3: #6affda;
+    --text: #e8e8f0;
+    --text-dim: #7a7a9a;
+    --correct: #4ade80;
+    --wrong: #f87171;
+    --warn: #fbbf24;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+  body::after { content:''; position:fixed; top:-30%; left:50%; transform:translateX(-50%); width:60vw; height:60vw; background:radial-gradient(ellipse, rgba(124,106,255,0.08) 0%, transparent 70%); pointer-events:none; z-index:0; }
+  .app { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:0 20px 80px; }
+  header { padding:40px 0 30px; display:flex; align-items:flex-end; justify-content:space-between; border-bottom:1px solid var(--border); margin-bottom:32px; }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:48px; letter-spacing:2px; background:linear-gradient(135deg,#7c6aff,#ff6a9e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+  .logo span { color:var(--accent3); -webkit-text-fill-color:var(--accent3); }
+  .stats-bar { display:flex; gap:20px; }
+  .stat { text-align:right; line-height:1.2; }
+  .stat-val { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--accent); }
+  .stat-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
+  .progress-track { height:3px; background:var(--surface2); border-radius:2px; margin-bottom:28px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; transition:width 0.5s; }
+  .mode-tabs { display:flex; gap:8px; margin-bottom:28px; background:var(--surface); padding:6px; border-radius:14px; border:1px solid var(--border); }
+  .mode-tab { flex:1; padding:10px; border:none; border-radius:10px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; transition:all 0.2s; background:transparent; color:var(--text-dim); }
+  .mode-tab.active { background:var(--accent); color:white; box-shadow:0 4px 20px rgba(124,106,255,0.4); }
+  .mode-tab:hover:not(.active) { color:var(--text); background:var(--surface2); }
+  .quiz-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:36px; margin-bottom:20px; position:relative; overflow:hidden; animation:slideIn 0.35s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .quiz-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3)); }
+  .sentence-num { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; color:var(--accent); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+  .sentence-num::after { content:''; flex:1; height:1px; background:var(--border); }
+  .tts-controls { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+  .play-btn { width:52px; height:52px; border-radius:50%; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--accent2)); box-shadow:0 4px 20px rgba(124,106,255,0.4); transition:all 0.2s; font-size:20px; flex-shrink:0; }
+  .play-btn:hover { transform:scale(1.08); }
+  .play-btn.playing { animation:pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 4px 20px rgba(124,106,255,0.4)} 50%{box-shadow:0 4px 30px rgba(124,106,255,0.8)} }
+  .speed-controls { display:flex; gap:6px; }
+  .speed-btn { padding:6px 12px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text-dim); font-size:12px; font-family:'DM Mono',monospace; cursor:pointer; transition:all 0.2s; }
+  .speed-btn.active { border-color:var(--accent3); color:var(--accent3); background:rgba(106,255,218,0.08); }
+  .repeat-btn { padding:6px 12px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text-dim); font-size:12px; cursor:pointer; transition:all 0.2s; margin-left:auto; }
+  .repeat-btn.active { border-color:var(--warn); color:var(--warn); background:rgba(251,191,36,0.08); }
+  .korean-hint { font-size:14px; color:var(--text-dim); margin-bottom:20px; padding:12px 16px; background:var(--surface2); border-radius:10px; border-left:3px solid var(--accent); display:none; }
+  .korean-hint.show { display:block; }
+  .sentence-display { font-family:'DM Mono',monospace; font-size:18px; line-height:2.2; margin-bottom:24px; word-break:break-word; }
+  .blank-input { display:inline-block; min-width:100px; border-bottom:2px solid var(--accent); background:rgba(124,106,255,0.08); border-radius:6px 6px 0 0; padding:2px 8px; font-family:'DM Mono',monospace; font-size:18px; color:var(--text); outline:none; transition:all 0.2s; vertical-align:baseline; }
+  .blank-input:focus { border-color:var(--accent2); background:rgba(255,106,158,0.08); }
+  .blank-input.correct { border-color:var(--correct); background:rgba(74,222,128,0.1); color:var(--correct); }
+  .blank-input.wrong { border-color:var(--wrong); background:rgba(248,113,113,0.1); color:var(--wrong); }
+  .dictation-area { width:100%; background:var(--surface2); border:2px solid var(--border); border-radius:14px; padding:16px 20px; font-family:'DM Mono',monospace; font-size:16px; color:var(--text); resize:none; outline:none; min-height:80px; transition:border-color 0.2s; line-height:1.6; }
+  .dictation-area:focus { border-color:var(--accent); }
+  .dictation-area.correct { border-color:var(--correct); }
+  .dictation-area.wrong { border-color:var(--wrong); }
+  .result-display { margin-top:16px; padding:14px 18px; border-radius:12px; font-size:14px; display:none; line-height:1.8; }
+  .result-display.show { display:block; animation:fadeIn 0.3s; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .result-display.correct-result { background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); color:var(--correct); }
+  .result-display.wrong-result { background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.3); color:var(--text); }
+  .answer-highlight { color:var(--correct); font-weight:600; }
+  .diff-wrong { color:var(--wrong); text-decoration:line-through; }
+  .diff-correct { color:var(--correct); }
+  .btn-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .btn { padding:12px 24px; border-radius:12px; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; transition:all 0.2s; }
+  .btn-primary { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; box-shadow:0 4px 16px rgba(124,106,255,0.3); }
+  .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(124,106,255,0.5); }
+  .btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+  .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
+  .btn-ghost { background:transparent; color:var(--text-dim); border:1px solid transparent; }
+  .btn-ghost:hover { color:var(--text); border-color:var(--border); }
+  .nav-row { display:flex; justify-content:space-between; align-items:center; margin-top:16px; }
+  .hint-toggle { background:transparent; border:1px solid var(--border); color:var(--text-dim); padding:8px 14px; border-radius:8px; font-size:12px; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+  .hint-toggle:hover { border-color:var(--warn); color:var(--warn); }
+  .sentence-select-wrap { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:20px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .range-label { font-size:13px; color:var(--text-dim); white-space:nowrap; }
+  .range-input { background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:8px 12px; font-family:'DM Mono',monospace; font-size:14px; width:80px; outline:none; }
+  .range-input:focus { border-color:var(--accent); }
+  .shuffle-toggle { display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; color:var(--text-dim); }
+  .toggle-switch { width:36px; height:20px; background:var(--surface2); border-radius:10px; position:relative; border:1px solid var(--border); transition:background 0.2s; }
+  .toggle-switch::after { content:''; position:absolute; width:14px; height:14px; background:var(--text-dim); border-radius:50%; top:2px; left:2px; transition:all 0.2s; }
+  input[type="checkbox"]:checked + .toggle-switch { background:var(--accent); border-color:var(--accent); }
+  input[type="checkbox"]:checked + .toggle-switch::after { left:18px; background:white; }
+  input[type="checkbox"] { display:none; }
+  .score-card { display:flex; gap:12px; margin-bottom:20px; }
+  .score-item { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; text-align:center; }
+  .score-val { font-family:'Bebas Neue',sans-serif; font-size:32px; line-height:1; }
+  .score-val.good { color:var(--correct); }
+  .score-val.bad { color:var(--wrong); }
+  .score-val.neutral { color:var(--accent); }
+  .score-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:4px; }
+  .memorized-grid { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:20px; }
+  .mem-dot { width:10px; height:10px; border-radius:50%; background:var(--surface2); border:1px solid var(--border); transition:all 0.3s; cursor:pointer; }
+  .mem-dot.done { background:var(--correct); border-color:var(--correct); }
+  .mem-dot.current { background:var(--accent); border-color:var(--accent); animation:pulse 1s infinite; }
+  .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 24px; font-size:14px; z-index:100; transition:transform 0.3s; white-space:nowrap; box-shadow:0 8px 32px rgba(0,0,0,0.4); }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+  .toast.success { border-color:var(--correct); color:var(--correct); }
+  .toast.error { border-color:var(--wrong); color:var(--wrong); }
+  .congrats { text-align:center; padding:60px 20px; display:none; }
+  .congrats.show { display:block; animation:slideIn 0.5s ease; }
+  .congrats-emoji { font-size:80px; margin-bottom:20px; }
+  .congrats-title { font-family:'Bebas Neue',sans-serif; font-size:56px; background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; }
+  @media(max-width:600px){ .logo{font-size:36px} .quiz-card{padding:24px} .sentence-display{font-size:15px} .blank-input{font-size:15px} }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <div class="logo">ENGLISH<span>MASTER</span></div>
+      <div style="font-size:12px;color:var(--text-dim);margin-top:4px;letter-spacing:1px;">230 ACADEMIC SENTENCES</div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-val" id="masteredCount">0</div><div class="stat-label">Mastered</div></div>
+      <div class="stat"><div class="stat-val" id="streakCount">0</div><div class="stat-label">Streak 🔥</div></div>
+    </div>
+  </header>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="memorized-grid" id="memorizedGrid"></div>
+  <div class="score-card">
+    <div class="score-item"><div class="score-val neutral" id="currentIdx">1</div><div class="score-label">Current #</div></div>
+    <div class="score-item"><div class="score-val good" id="correctCount">0</div><div class="score-label">Correct</div></div>
+    <div class="score-item"><div class="score-val bad" id="wrongCount">0</div><div class="score-label">Wrong</div></div>
+    <div class="score-item"><div class="score-val neutral" id="accuracyPct">—</div><div class="score-label">Accuracy</div></div>
+  </div>
+  <div class="sentence-select-wrap">
+    <span class="range-label">문장 범위:</span>
+    <input type="number" class="range-input" id="rangeStart" value="1" min="1" max="230">
+    <span class="range-label">~</span>
+    <input type="number" class="range-input" id="rangeEnd" value="230" min="1" max="230">
+    <button class="btn btn-secondary" onclick="applyRange()" style="padding:8px 16px;font-size:13px;">적용</button>
+    <label class="shuffle-toggle" style="margin-left:auto;">
+      <input type="checkbox" id="shuffleCheck">
+      <span class="toggle-switch"></span>
+      <span>랜덤</span>
+    </label>
+  </div>
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('fillblank')">빈칸 채우기</button>
+    <button class="mode-tab" onclick="setMode('dictation')">받아쓰기</button>
+    <button class="mode-tab" onclick="setMode('listen')">전체 듣기</button>
+  </div>
+  <div class="quiz-card" id="quizCard">
+    <div class="sentence-num" id="sentenceNum">SENTENCE #1</div>
+    <div class="tts-controls">
+      <button class="play-btn" id="playBtn" onclick="playSentence()">▶</button>
+      <div class="speed-controls">
+        <button class="speed-btn active" onclick="setSpeed(0.7,this)">0.7×</button>
+        <button class="speed-btn" onclick="setSpeed(1.0,this)">1.0×</button>
+        <button class="speed-btn" onclick="setSpeed(1.2,this)">1.2×</button>
+      </div>
+      <button class="repeat-btn" id="repeatBtn" onclick="toggleRepeat()">🔁 반복</button>
+    </div>
+    <div class="korean-hint" id="koreanHint"></div>
+    <div id="quizContent"></div>
+  </div>
+  <div class="congrats" id="congratsDiv">
+    <div class="congrats-emoji">🎉</div>
+    <div class="congrats-title">COMPLETE!</div>
+    <p style="color:var(--text-dim);margin-bottom:24px;font-size:16px;">모든 문장을 완주했습니다!</p>
+    <button class="btn btn-primary" onclick="restartAll()">처음부터 다시</button>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="prevSentence()">← 이전</button>
+    <button class="hint-toggle" onclick="toggleHint()">🇰🇷 한국어 힌트</button>
+    <button class="btn btn-ghost" onclick="skipSentence()">건너뛰기 →</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const SENTENCES=[{en:"The celebrated theory is still the source of great controversy.",ko:"이 유명한 이론은 여전히 큰 논란의 대상이 되고 있습니다."},{en:"A good architectural structure should be useful, durable and beautiful.",ko:"좋은 건축 구조는 유용하고 내구성이 뛰어나며 아름다워야 합니다."},{en:"A group meeting will be held tomorrow in the library conference room.",ko:"내일 도서관 회의실에서 그룹 회의가 열립니다."},{en:"Educational level is found to be related to social and economic background.",ko:"교육 수준은 사회적, 경제적 배경과 관련이 있는 것으로 나타났습니다."},{en:"Tutorials are scheduled in the final week of the term.",ko:"튜토리얼은 학기 마지막 주에 예정되어 있습니다."},{en:"All dissertations must be accompanied by a submission form.",ko:"모든 논문에는 제출 양식이 첨부되어야 합니다."},{en:"All of the assignments must be submitted in person to the faculty office.",ko:"모든 과제는 교직원 사무실에 직접 제출해야 합니다."},{en:"The toughest part of postgraduate education is funding.",ko:"대학원 교육에서 가장 어려운 부분은 자금 조달입니다."},{en:"Our view is that educational reforms have been inadequately implemented.",ko:"우리의 견해는 교육 개혁이 부적절하게 시행되었다는 것입니다."},{en:"An introduction is an essential element of presentation.",ko:"소개는 프레젠테이션의 필수 요소입니다."},{en:"The assignments should be submitted to the department office before the deadlines.",ko:"과제는 마감일 전에 부서 사무실에 제출해야 합니다."},{en:"Before attending classes, you must register online or by post.",ko:"수업에 참석하기 전에 온라인 또는 우편으로 등록해야 합니다."},{en:"Certain scientific principles must be learned verbally or by logical deduction.",ko:"특정 과학 원리는 구두로 또는 논리적 추론을 통해 학습해야 합니다."},{en:"Daily practice can build confidence and improve skills.",ko:"매일 연습하면 자신감을 키우고 기술을 향상시킬 수 있습니다."},{en:"At that time, few people moved from towns to villages.",ko:"당시에는 마을에서 마을로 이사하는 사람이 거의 없었습니다."},{en:"Human beings compete with other living things for resources and space.",ko:"인간은 자원과 공간을 놓고 다른 생명체와 경쟁합니다."},{en:"Good research delivers practical benefits for real people.",ko:"좋은 연구는 실제 사람들에게 실질적인 혜택을 제공합니다."},{en:"He landed a job in a very prestigious law firm.",ko:"그는 매우 명망 있는 로펌에 취직했습니다."},{en:"The lecture is about the reasons for the financial crisis.",ko:"강의는 금융 위기의 원인에 관한 것입니다."},{en:"I thought it was through the small meeting room.",ko:"작은 회의실을 통해서인 줄 알았습니다."},{en:"If finance is a cause of concern, scholarships may be available.",ko:"재정적인 문제가 우려되는 경우 장학금을 받을 수 있습니다."},{en:"If you need additional help, visit the student resource center.",ko:"추가 도움이 필요하면 학생 리소스 센터를 방문하세요."},{en:"Important details from the argument are missing in the summary.",ko:"주장의 중요한 세부 사항이 요약에 누락되어 있습니다."},{en:"It may not be possible to solve the problem easily.",ko:"문제를 쉽게 해결하지 못할 수도 있습니다."},{en:"Library reference desks hold a lot of materials on academic history.",ko:"도서관 자료실에는 학술 역사에 관한 많은 자료가 있습니다."},{en:"Listening is the key skill needed to succeed in this course.",ko:"경청은 이 과정에서 성공하는 데 필요한 핵심 기술입니다."},{en:"Medical researchers have focused on causes of diseases and treatments.",ko:"의학 연구자들은 질병의 원인과 치료법에 집중해 왔습니다."},{en:"Mutually exclusive events can be described as either complementary or opposite.",ko:"상호 배타적인 이벤트는 상호 보완적이거나 반대되는 것으로 설명할 수 있습니다."},{en:"Organizational failure is considered from various perspectives in academic literature.",ko:"조직의 실패는 학술 문헌에서 다양한 관점에서 고려됩니다."},{en:"Our professor is hosting the business development conference.",ko:"우리 교수님이 비즈니스 개발 컨퍼런스를 주최하고 계십니다."},{en:"Plants are the living things that can grow on land or in water.",ko:"식물은 육지나 물에서 자랄 수 있는 생명체입니다."},{en:"Please make sure you have correctly cited all the necessary materials.",ko:"필요한 모든 자료를 올바르게 인용했는지 확인하세요."},{en:"Public perception about biotechnology is crucial for developing scientific consensus.",ko:"생명공학에 대한 대중의 인식은 과학적 공감대를 형성하는 데 매우 중요합니다."},{en:"Remember to sign the attendance register before leaving the lecture hall.",ko:"강의실을 떠나기 전에 출석부에 서명하는 것을 잊지 마세요."},{en:"Remember, the prestigious election of stewardship has strict eligibility criteria.",ko:"기억하세요, 권위 있는 지도자 선출은 엄격한 자격 기준이 있습니다."},{en:"Resources and materials are on hold at the library reference desk.",ko:"리소스와 자료는 도서관 참고 데스크에 보관되어 있습니다."},{en:"Many departments have their own special book collections.",ko:"많은 부서에서 자체적으로 특별한 도서 컬렉션을 보유하고 있습니다."},{en:"Some economists argue that the entire financial system is fatally flawed.",ko:"일부 경제학자들은 금융 시스템 전체에 치명적인 결함이 있다고 주장합니다."},{en:"Students have the options to live in college residences or apartments.",ko:"학생들은 대학 기숙사 또는 아파트에서 거주할 수 있습니다."},{en:"Students who are successful have good strategies for learning.",ko:"성공한 학생은 좋은 학습 전략을 가지고 있습니다."},{en:"That brief outline takes us to the beginning of the 20th century.",ko:"이 간략한 개요를 통해 20세기 초로 거슬러 올라갑니다."},{en:"The application processes may take longer than expected.",ko:"신청 절차가 예상보다 오래 걸릴 수 있습니다."},{en:"The cafeteria features soup, salads, sandwiches, chicken and fish.",ko:"카페테리아에서는 수프, 샐러드, 샌드위치, 치킨, 생선 요리를 맛볼 수 있습니다."},{en:"The chemistry building is located near the entrance to the campus.",ko:"화학 건물은 캠퍼스 입구 근처에 있습니다."},{en:"Rising inflation may indicate an increase in the demand for consumer products.",ko:"인플레이션 상승은 소비재에 대한 수요 증가를 나타낼 수 있습니다."},{en:"The faculty staff are very approachable, friendly and extremely helpful.",ko:"교수진은 매우 친근하고 친절하며 매우 도움이 됩니다."},{en:"The history of the university is a long and interesting one.",ko:"대학의 역사는 길고 흥미롭습니다."},{en:"The island is located at the south end of the bay.",ko:"이 섬은 만의 남쪽 끝에 위치해 있습니다."},{en:"The massive accumulation of data was converted into a communicable argument.",ko:"방대한 데이터의 축적은 소통 가능한 논쟁으로 전환되었습니다."},{en:"The most popular courses still have a few places left.",ko:"가장 인기 있는 코스는 아직 자리가 몇 개 남아있습니다."},{en:"The paper challenged many previously accepted theories.",ko:"이 논문은 기존에 통용되던 많은 이론에 도전했습니다."},{en:"The results of the study underscored the importance of early detection.",ko:"연구 결과는 조기 발견의 중요성을 강조했습니다."},{en:"Safety glasses should be worn while doing experiments in the lab.",ko:"실험실에서 실험을 할 때는 보안경을 착용해야 합니다."},{en:"There are some doubts about whether these events actually occurred.",ko:"이러한 이벤트가 실제로 발생했는지에 대한 의구심이 있습니다."},{en:"There is a clear need for further research in this field.",ko:"이 분야에 대한 추가 연구가 필요한 것은 분명합니다."},{en:"There is clearly a need for further research in this field.",ko:"이 분야에 대한 추가 연구가 필요한 것은 분명합니다."},{en:"This class will look at the structure of an essay.",ko:"이 수업에서는 에세이의 구조를 살펴봅니다."},{en:"Water filters on campus will discourage the unnecessary use of plastic bottles.",ko:"캠퍼스에 정수 필터를 설치하면 불필요한 플라스틱 병 사용을 줄일 수 있습니다."},{en:"We have not yet achieved equality in our society.",ko:"우리 사회는 아직 평등을 이루지 못했습니다."},{en:"We study science to understand and appreciate the world around us.",ko:"우리는 주변 세계를 이해하고 감사하기 위해 과학을 공부합니다."},{en:"Parents' talk to children tends to be simplified.",ko:"부모가 자녀와 대화하는 방식은 단순화되는 경향이 있습니다."},{en:"You will acquire many skills during the academic studies.",ko:"학업을 진행하는 동안 많은 기술을 습득하게 됩니다."},{en:"Speak to your tutor if you need further assistance.",ko:"추가 도움이 필요하면 튜터에게 문의하세요."},{en:"Education and training provide important skills for the labor force.",ko:"교육과 훈련은 노동력에게 중요한 기술을 제공합니다."},{en:"Farming methods across the world have greatly developed recently.",ko:"최근 전 세계적으로 농사법이 크게 발전했습니다."},{en:"There have been many changes recently in the mathematics department.",ko:"최근 수학과에 많은 변화가 있었습니다."},{en:"Those who are considering a career in marketing should attend the talk.",ko:"마케팅 분야로 진로를 고려하고 있다면 이 강연에 꼭 참석하세요."},{en:"The university has invested in new technologies designed to support learning.",ko:"대학은 학습을 지원하기 위해 고안된 새로운 기술에 투자했습니다."},{en:"A good academic paper should present a clear argument.",ko:"좋은 학술 논문은 명확한 논거를 제시해야 합니다."},{en:"A good research assistant is not afraid to ask questions.",ko:"훌륭한 연구 조교는 질문을 두려워하지 않습니다."},{en:"Collaboration between departments is a feature of successful companies.",ko:"부서 간 협업은 성공적인 기업의 특징입니다."},{en:"Enrolling in a double major may increase your career options.",ko:"복수 전공을 등록하면 커리어 선택의 폭이 넓어질 수 있습니다."},{en:"Geography is generally divided into two main branches, human and physical.",ko:"지리학은 일반적으로 인적 지리와 물리적 지리의 두 가지 주요 분야로 나뉩니다."},{en:"In this language course, we focus on both fluency and accuracy.",ko:"이 언어 과정에서는 유창함과 정확성 모두에 중점을 둡니다."},{en:"This course provides the opportunity to get valuable industry experience.",ko:"이 과정은 귀중한 업계 경험을 쌓을 수 있는 기회를 제공합니다."},{en:"Read the safety instructions before using any equipment in the workshop.",ko:"워크샵에서 장비를 사용하기 전에 안전 지침을 읽어보세요."},{en:"Essays and assignments are spread out across the academic year.",ko:"에세이와 과제는 학년 전체에 걸쳐 분산되어 있습니다."},{en:"Continuing students will be sent the necessary application forms.",ko:"계속 수강하는 학생에게는 필요한 신청서가 발송됩니다."},{en:"Calculators may not be used during the examination.",ko:"시험 중에는 계산기를 사용할 수 없습니다."},{en:"The elective course introduces engineering students to construction practices and concepts.",ko:"이 선택 과목은 공학도에게 건설 실무와 개념을 소개합니다."},{en:"Our new medical students must attend the talk about optional courses.",ko:"신입 의대생은 선택 과목에 대한 강연에 반드시 참석해야 합니다."},{en:"A professor took one year off to work on her book.",ko:"한 교수는 책 작업을 위해 1년간 휴직했습니다."},{en:"Sugar is a compound including carbon, oxygen, and hydrogen atoms.",ko:"설탕은 탄소, 산소, 수소 원자로 이루어진 화합물이다."},{en:"Scientists were unsure when the early men first left Africa.",ko:"과학자들은 초기 인류가 언제 아프리카를 처음 떠났는지 확신하지 못했습니다."},{en:"The printers automatically print on both sides of each page.",ko:"프린터는 각 페이지의 양면을 자동으로 인쇄합니다."},{en:"There is a widely believed perception that engineering is for boys.",ko:"공학은 남자아이들이나 하는 것이라는 인식이 널리 퍼져 있습니다."},{en:"Time and distance are used to calculate speed.",ko:"속도 계산에는 시간과 거리가 사용됩니다."},{en:"Distance learning allows you to develop a career around your commitments.",ko:"원격 학습을 통해 약속을 중심으로 커리어를 개발할 수 있습니다."},{en:"Every student has regular meetings with his or her personal tutor.",ko:"모든 학생은 개인 튜터와 정기적인 미팅을 갖습니다."},{en:"Castles were designed to intimidate both local people and enemies.",ko:"성은 지역 주민과 적 모두를 위협할 수 있도록 설계되었습니다."},{en:"The opening hours of the library are reduced during summer.",ko:"여름철에는 도서관 운영 시간이 단축됩니다."},{en:"A laptop computer has been found in the biology lab.",ko:"생물학 실험실에서 노트북 컴퓨터가 발견되었습니다."},{en:"His appointment to the Minister of Culture was seen as a demotion.",ko:"그의 문화부 장관 임명은 강등으로 여겨졌습니다."},{en:"Measures must be taken to prevent the unemployment rate from increasing.",ko:"실업률 증가를 막기 위한 조치를 취해야 합니다."},{en:"The coffee machine located on the third floor is not working today.",ko:"3층에 위치한 커피 머신이 오늘 작동하지 않습니다."},{en:"University staff provide advice on renting and accommodation.",ko:"대학 직원이 임대 및 숙박 시설에 대한 조언을 제공합니다."},{en:"Request for late applications will not be accepted under any circumstances.",ko:"늦은 신청 요청은 어떠한 경우에도 허용되지 않습니다."},{en:"Salt is produced from seawater or extracted from the ground.",ko:"소금은 바닷물에서 생산되거나 땅에서 추출됩니다."},{en:"The news will not be received until the following week.",ko:"이 소식은 다음 주까지 수신되지 않습니다."},{en:"You do not need specialist knowledge to enjoy this book.",ko:"전문 지식이 없어도 이 책을 즐길 수 있습니다."},{en:"The area has a variety of underwater habitats and species.",ko:"이 지역에는 다양한 수중 서식지와 종이 있습니다."},{en:"Your ideas are discussed and debated in seminars and tutorials.",ko:"여러분의 아이디어는 세미나와 튜토리얼에서 논의되고 토론됩니다."},{en:"Our study program equips students with essential skills for university.",ko:"저희의 학습 프로그램은 학생들에게 대학에 필요한 필수 기술을 제공합니다."},{en:"Many food crops require large amounts of water and fertilizer.",ko:"많은 식량 작물에는 많은 양의 물과 비료가 필요합니다."},{en:"Classical mechanics is sometimes considered as a branch of applied mathematics.",ko:"고전 역학은 때때로 응용 수학의 한 분야로 간주되기도 합니다."},{en:"Students should leave their bags on the table by the door.",ko:"학생들은 문 옆 테이블 위에 가방을 놓아두어야 합니다."},{en:"New materials and techniques are changing the style of modern architecture.",ko:"새로운 재료와 기술이 현대 건축의 스타일을 바꾸고 있습니다."},{en:"Sea levels are expected to rise during the next century.",ko:"해수면은 다음 세기 동안 상승할 것으로 예상됩니다."},{en:"Please close the door behind you when you leave the room.",ko:"방을 나갈 때는 문을 닫아주세요."},{en:"Many university lectures can now be viewed on the internet.",ko:"이제 많은 대학 강의를 인터넷에서 볼 수 있습니다."},{en:"The department works closely with business communities.",ko:"이 부서는 비즈니스 커뮤니티와 긴밀히 협력합니다."},{en:"There is an accounting assignment for finance students.",ko:"재무학과 학생을 위한 회계 과제가 있습니다."},{en:"Relying on natural ability will not get you far in science.",ko:"타고난 능력에 의지한다고 해서 과학 분야에서 멀리 나아갈 수는 없습니다."},{en:"We should never underestimate the power of creative design.",ko:"우리는 창의적인 디자인의 힘을 결코 과소평가해서는 안 됩니다."},{en:"Linguistics is the scientific study and analysis of language.",ko:"언어학은 언어를 과학적으로 연구하고 분석하는 학문입니다."},{en:"Marine environments have been destroyed through pollution and unsustainable development.",ko:"해양 환경은 오염과 지속 불가능한 개발로 인해 파괴되고 있습니다."},{en:"Designers need to keep up with the social trends.",ko:"디자이너는 사회적 트렌드를 따라가야 합니다."},{en:"People have been dependent on using phones in their everyday lives.",ko:"사람들은 일상 생활에서 휴대폰 사용에 의존해 왔습니다."},{en:"A new collection of articles has just been published.",ko:"새로운 기사 모음집이 막 출간되었습니다."},{en:"A visit to the designed museum is of great value.",ko:"디자인 박물관을 방문하는 것은 큰 가치가 있습니다."},{en:"The university provides excellent leisure facilities for students and staff.",ko:"대학은 학생과 교직원을 위한 훌륭한 여가 시설을 제공합니다."},{en:"Auditions for the university choir will be held next week.",ko:"대학 합창단 오디션은 다음 주에 열립니다."},{en:"A good abstract highlights the key points of your paper.",ko:"좋은 초록은 논문의 핵심 사항을 강조합니다."},{en:"The commissioner will apportion the funds among all the authorities.",ko:"위원장이 모든 기관에 자금을 배분합니다."},{en:"Please note that the seminar has now been canceled.",ko:"현재 세미나가 취소되었음을 알려드립니다."},{en:"Three separate research resources are not enough for this assessment.",ko:"이 평가에는 세 가지 개별 연구 리소스만으로는 충분하지 않습니다."},{en:"New media journalism is an exciting area of study.",ko:"뉴미디어 저널리즘은 흥미로운 연구 분야입니다."},{en:"It is an integrated course with several main elements.",ko:"몇 가지 주요 요소가 포함된 통합 과정입니다."},{en:"Rising sea temperatures are a sign of climate change.",ko:"해수 온도 상승은 기후 변화의 신호입니다."},{en:"The economic predictions turned out to be incorrect.",ko:"경제 예측은 틀린 것으로 판명되었습니다."},{en:"Summer school programs allow some students to accelerate their studies.",ko:"일부 학생들은 여름방학 프로그램을 통해 학습 속도를 높일 수 있습니다."},{en:"The momentum is defined as the combination of mass and velocity.",ko:"운동량은 질량과 속도의 조합으로 정의됩니다."},{en:"Parents are financially responsible for their children right up until they reach adulthood.",ko:"부모는 자녀가 성인이 될 때까지 재정적으로 책임져야 합니다."},{en:"More research is needed before any definitive conclusion can be drawn.",ko:"확실한 결론을 내리기 위해서는 더 많은 연구가 필요합니다."},{en:"A world expert in financial management will give a guest lecture.",ko:"재무 관리 분야의 세계적인 전문가가 초청 강연을 진행합니다."},{en:"The north campus car park could be closed on Sunday.",ko:"북쪽 캠퍼스 주차장은 일요일에 폐쇄될 수 있습니다."},{en:"The study center in the library has all the latest technologies.",ko:"도서관의 학습 센터에는 모든 최신 기술이 갖추어져 있습니다."},{en:"At university students can make friends for life.",ko:"대학생은 평생 친구를 사귈 수 있습니다."},{en:"Much of this research is carried out in the laboratory.",ko:"이 연구의 대부분은 실험실에서 수행됩니다."},{en:"Technology is changing the way that media is used and studied.",ko:"기술은 미디어를 사용하고 연구하는 방식을 바꾸고 있습니다."},{en:"You will be tested by continuous assessments and examinations.",ko:"지속적인 평가와 검사를 통해 테스트를 받게 됩니다."},{en:"The college operates a system of continuous assessments.",ko:"본교는 지속적인 평가 시스템을 운영하고 있습니다."},{en:"Scientists have founded all parts of society today.",ko:"과학자들은 오늘날 사회의 모든 분야를 창시했습니다."},{en:"There are still some tickets available for the concert next Wednesday.",ko:"다음 주 수요일 콘서트 티켓이 아직 남아 있습니다."},{en:"Novelists write about the best things that they know about.",ko:"소설가들은 자신이 알고 있는 최고의 것들에 대해 글을 씁니다."},{en:"The lecture today will cover all the main reasons for global warming.",ko:"오늘 강연에서는 지구 온난화의 주요 원인을 모두 다룰 예정입니다."},{en:"The rising temperature is changing the wildlife population.",ko:"기온 상승으로 인해 야생 동물 개체수가 변화하고 있습니다."},{en:"The director of the gallery was grateful for the anonymous donation.",ko:"갤러리 관장은 익명으로 기부해 주신 것에 감사했습니다."},{en:"You should have awareness of how the business operates globally.",ko:"비즈니스가 전 세계적으로 어떻게 운영되는지 알고 있어야 합니다."},{en:"Art is an expression of creative skills and imagination.",ko:"예술은 창의력과 상상력의 표현입니다."},{en:"We have sophisticated ways of studying the brain in action.",ko:"우리는 두뇌의 활동을 연구하는 정교한 방법을 가지고 있습니다."},{en:"The article considers the leisure habits of teenagers in rural areas.",ko:"이 글은 농촌 지역 청소년들의 여가 습관을 고찰합니다."},{en:"The lectures today were carried out in the field of global warming.",ko:"오늘 강의는 지구 온난화 분야에서 진행되었습니다."},{en:"The university will cease the colossal renovation of the faint empty theater.",ko:"대학은 희미하고 텅 빈 극장에 대한 대대적인 개축을 중단할 예정이다."},{en:"We learned through observations and the analysis of human behaviors.",ko:"우리는 관찰과 인간 행동 분석을 통해 배웠습니다."},{en:"The subject was complex and difficult to explain.",ko:"이 주제는 복잡하고 설명하기 어려웠습니다."},{en:"Our aim is to reduce the risks that people take.",ko:"우리의 목표는 사람들이 감수하는 위험을 줄이는 것입니다."},{en:"Please confirm that you have received the textbook.",ko:"교재를 받았는지 확인해 주세요."},{en:"All answers must be thoroughly researched and supported by relevant theories.",ko:"모든 답안은 관련 이론을 철저히 조사하고 이를 뒷받침해야 합니다."},{en:"Accountancy students have to hand in their dissertations this week.",ko:"회계학과 학생들은 이번 주에 논문을 제출해야 합니다."},{en:"His analysis study appears to be based on the false premise.",ko:"그의 분석 연구는 잘못된 전제를 바탕으로 한 것으로 보입니다."},{en:"Visual aid can be really helpful when you are revising.",ko:"수정 작업을 할 때 시각적 자료가 정말 도움이 될 수 있습니다."},{en:"We encourage students to complete their applications before the deadline.",ko:"학생들이 마감일 전에 지원서를 완료할 것을 권장합니다."},{en:"Research shows that exercising makes us feel better.",ko:"연구에 따르면 운동을 하면 기분이 좋아진다고 합니다."},{en:"Graduates from this course typically pursue careers in financial sector.",ko:"이 과정의 졸업생은 일반적으로 금융 부문에서 경력을 쌓습니다."},{en:"It is a debate about the value of knowledge.",ko:"지식의 가치에 대한 논쟁입니다."},{en:"Strangely, people are simultaneously impressed by and skeptical about statistics.",ko:"이상하게도 사람들은 통계에 대해 깊은 인상을 받으면서도 동시에 회의적인 반응을 보입니다."},{en:"Vocabulary that is peculiar in a special field is called jargon.",ko:"특수한 분야에서만 사용되는 어휘를 전문용어라고 합니다."},{en:"The collapse of the housing market has caused recessions.",ko:"주택시장의 붕괴는 경기침체를 가져왔다."},{en:"Calculators allow us to add numbers without making mistakes.",ko:"계산기를 사용하면 실수 없이 숫자를 더할 수 있습니다."},{en:"Most of the lectures begin punctually, so do not be late.",ko:"대부분의 강의는 정시에 시작되므로 지각하지 마세요."},{en:"The student union hosts a variety of social events.",ko:"학생회에서는 다양한 사교 행사를 주최합니다."},{en:"The museum is closed on the third Monday of every month.",ko:"박물관은 매월 셋째 주 월요일에 휴관합니다."},{en:"Social psychology is concerned with the understanding of human behaviors.",ko:"사회 심리학은 인간 행동에 대한 이해와 관련이 있습니다."},{en:"Gravity is the force that attracts two bodies toward one another.",ko:"중력은 두 물체를 서로 끌어당기는 힘입니다."},{en:"A series of observations were carried out in the classroom.",ko:"교실에서 일련의 관찰이 수행되었습니다."},{en:"The reception staff can give advice on renting private accommodation.",ko:"리셉션 직원은 개인 숙소 임대에 관한 조언을 제공해 드립니다."},{en:"Artists need to make their works both original and accessible.",ko:"예술가는 자신의 작품을 독창적이고 쉽게 접근할 수 있도록 만들어야 합니다."},{en:"The archeologist's new discoveries stand out in the previously overlooked foundations.",ko:"고고학자의 새로운 발견은 이전에 간과되었던 유적에서 두드러집니다."},{en:"Students should take their time to study.",ko:"학생들은 시간을 들여 공부해야 합니다."},{en:"The art course has been canceled due to the new policy.",ko:"새로운 정책으로 인해 미술 강좌가 취소되었습니다."},{en:"Enrolling in a double major can provide you with better career opportunities.",ko:"복수 전공에 등록하면 더 나은 커리어 기회를 얻을 수 있습니다."},{en:"Please return the textbooks to the correct bookshelves in the library.",ko:"교과서를 도서관의 올바른 책꽂이에 반납해 주세요."},{en:"The contract will be signed by the owner of the company.",ko:"계약은 회사 소유주가 서명합니다."},{en:"The glittering of the lake surface camouflages the fish.",ko:"호수 표면의 반짝이는 빛이 물고기를 위장합니다."},{en:"Having enough sleep has many positive benefits.",ko:"충분한 수면은 많은 긍정적인 이점을 가져다줍니다."},{en:"The lecture will cover the reason for climate change.",ko:"이번 강연에서는 기후 변화의 원인에 대해 다룰 예정입니다."},{en:"Assessment procedure has been changed slightly since the last year.",ko:"작년부터 평가 절차가 약간 변경되었습니다."},{en:"The article illustrates the intricate relationship of culture and language.",ko:"이 글은 문화와 언어의 복잡한 관계를 잘 보여줍니다."},{en:"The field of social development includes description of social behavior.",ko:"사회 발달 분야에는 사회적 행동에 대한 설명이 포함됩니다."},{en:"The tutor has canceled the lecture for geography students.",ko:"강사가 지리학 학생을 위한 강의를 취소했습니다."},{en:"All accounting students must submit their dissertations before the end of the week.",ko:"모든 회계학 학생은 이번 주가 끝나기 전에 논문을 제출해야 합니다."},{en:"You need to make sure that all your essays are handed in on time.",ko:"모든 에세이를 제시간에 제출해야 합니다."},{en:"We should always use recycled plastic and glass bottles.",ko:"항상 재활용 플라스틱과 유리병을 사용해야 합니다."},{en:"Plastic pollution is very dangerous for ocean lives.",ko:"플라스틱 오염은 해양 생물에게 매우 위험합니다."},{en:"The content is to define the combination of math and philosophy.",ko:"내용은 수학과 철학의 결합을 정의하는 것입니다."},{en:"Students often conduct research to enhance their knowledge.",ko:"학생들은 종종 지식을 향상시키기 위해 연구를 수행합니다."},{en:"Application forms should be submitted in one week.",ko:"신청서는 1주일 이내에 제출해야 합니다."},{en:"Farming is affected by changes in seasonal patterns.",ko:"농사는 계절 패턴의 변화에 영향을 받습니다."},{en:"The fitness gym is next to the student center.",ko:"피트니스 센터는 학생회관 옆에 있습니다."},{en:"The rise in sea level indicates climate change.",ko:"해수면 상승은 기후 변화를 나타냅니다."},{en:"The university library cafe is on the third floor.",ko:"대학 도서관 카페는 3층에 있습니다."},{en:"The meeting seemed minor, occurring in just a small room.",ko:"작은 방에서 진행된 회의는 사소해 보였습니다."},{en:"Some students were absent due to the train delay.",ko:"일부 학생들은 열차 지연으로 인해 결석했습니다."},{en:"The class is canceled because the professor is sick.",ko:"교수님이 아파서 수업이 취소되었습니다."},{en:"We were talking about ways of committing crimes.",ko:"우리는 범죄를 저지르는 방법에 대해 이야기하고 있었습니다."},{en:"The study center in the library has the latest technology.",ko:"도서관 내 스터디 센터는 최신 기술을 갖추고 있습니다."},{en:"Maths uses numbers and shapes to solve problems.",ko:"수학은 숫자와 도형을 사용하여 문제를 해결합니다."},{en:"Participating in the class is the center of the course.",ko:"수업에 참여하는 것이 이 과정의 핵심입니다."},{en:"A few journalism students write for the school newspaper.",ko:"몇몇 저널리즘과 학생들은 학교 신문에 글을 기고합니다."},{en:"The employment rate has steadily increased over the last year.",ko:"지난 한 해 동안 고용률은 꾸준히 증가했습니다."},{en:"And in that regard, as well as in other regards, it stands as an important contribution.",ko:"그 점에서도 다른 측면과 마찬가지로 중요한 공헌을 하고 있습니다."},{en:"Students will develop confidence in their ability to think critically.",ko:"학생들은 비판적으로 사고하는 능력에 대한 자신감을 키울 수 있습니다."},{en:"Consumer confidence has a direct influence on sales.",ko:"소비자 신뢰는 매출에 직접적인 영향을 미칩니다."},{en:"Packaging is very important to attract the attention of a buyer.",ko:"구매자의 관심을 끌기 위해서는 포장이 매우 중요합니다."},{en:"The students will meet their new teachers after the summer vacation.",ko:"학생들은 여름방학이 끝난 후 새로운 선생님을 만날 것입니다."},{en:"This problem is complex and difficult to explain.",ko:"이 문제는 복잡하고 설명하기 어렵습니다."},{en:"Blue whales are the largest animals that have ever lived.",ko:"흰긴수염고래는 지금까지 살았던 동물 중 가장 큰 동물입니다."},{en:"The transformation of media has changed the way information is both used and studied.",ko:"미디어의 변화는 정보를 이용하고 연구하는 방식을 변화시켰습니다."},{en:"Students are required to have an undergraduate degree in Biology to be enrolled in this course.",ko:"이 과정에 등록하려면 생물학 학사 학위가 있어야 합니다."},{en:"The university library holds a number of collections of geological maps.",ko:"대학 도서관에는 다양한 지질도 컬렉션이 있습니다."},{en:"Students should take the training course to use the gym.",ko:"학생들은 체육관을 이용하려면 교육 과정을 수강해야 합니다."},{en:"To gain access to the facilities, student cards must be shown.",ko:"시설을 이용하려면 학생증을 제시해야 합니다."},{en:"The financial market reacts wildly during the period of uncertainty.",ko:"불확실한 시기에는 금융 시장이 격렬하게 반응합니다."},{en:"Meteorology is the detailed study of the Earth's atmosphere.",ko:"기상학은 지구 대기를 자세히 연구하는 학문입니다."},{en:"Please put your bags on the table next to the door.",ko:"가방은 문 옆 테이블에 올려놓으세요."},{en:"Climate change is a fierce phenomenon acknowledged by scientists.",ko:"기후 변화는 과학자들도 인정하는 치열한 현상입니다."},{en:"Safety is the most important in the biology lab.",ko:"생물학 연구실에서는 안전이 가장 중요합니다."},{en:"The essay assignments are given in the midterm and final exams.",ko:"에세이 과제는 중간고사 및 기말고사에서 주어집니다."},{en:"The next lecture will take place at a different location.",ko:"다음 강의는 다른 장소에서 열립니다."}];
+
+let currentMode='fillblank',queue=[],queuePos=0,currentSentence=null,correctCount=0,wrongCount=0,streak=0,mastered=new Set(),answered=false,ttsSpeed=0.7,repeatMode=false,hintVisible=false,rangeStart=0,rangeEnd=229,shuffleMode=false,blankWords=[];
+
+function buildQueue(){let i=[];for(let n=rangeStart;n<=rangeEnd;n++)i.push(n);if(shuffleMode)i=i.sort(()=>Math.random()-0.5);queue=i;queuePos=0;}
+function applyRange(){const s=parseInt(document.getElementById('rangeStart').value)-1,e=parseInt(document.getElementById('rangeEnd').value)-1;rangeStart=Math.max(0,Math.min(s,229));rangeEnd=Math.max(rangeStart,Math.min(e,229));buildQueue();loadCurrent();}
+document.getElementById('shuffleCheck').addEventListener('change',function(){shuffleMode=this.checked;buildQueue();loadCurrent();});
+
+function setMode(mode){currentMode=mode;document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['fillblank','dictation','listen'][i]===mode));answered=false;loadCurrent();}
+
+function playSentence(text){
+  if(!('speechSynthesis' in window)){showToast('TTS 미지원 브라우저','error');return;}
+  window.speechSynthesis.cancel();
+  const t=text||(currentSentence?currentSentence.en:'');
+  if(!t)return;
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang='en-US';u.rate=ttsSpeed;u.pitch=1;
+  const btn=document.getElementById('playBtn');
+  btn.classList.add('playing');btn.textContent='⏸';
+  u.onend=()=>{btn.classList.remove('playing');btn.textContent='▶';if(repeatMode&&currentMode==='listen')setTimeout(()=>playSentence(),800);};
+  window.speechSynthesis.speak(u);
+}
+
+function setSpeed(s,el){ttsSpeed=s;document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function toggleRepeat(){repeatMode=!repeatMode;document.getElementById('repeatBtn').classList.toggle('active',repeatMode);}
+
+function getBlankWords(sentence){
+  const words=sentence.split(/\s+/);
+  const cands=words.map((w,i)=>({w,i})).filter(({w})=>w.replace(/[^a-zA-Z]/g,'').length>=4);
+  const count=Math.min(3,Math.max(1,Math.floor(cands.length*0.3)));
+  const picked=[],used=new Set();
+  let tries=0;
+  while(picked.length<count&&tries<50){tries++;const r=cands[Math.floor(Math.random()*cands.length)];if(!used.has(r.i)){picked.push(r);used.add(r.i);}}
+  return picked.sort((a,b)=>a.i-b.i);
+}
+
+function renderFillBlank(s){
+  blankWords=getBlankWords(s.en);
+  const bi=new Set(blankWords.map(b=>b.i));
+  const words=s.en.split(/\s+/);
+  let html='<div class="sentence-display">';
+  words.forEach((w,i)=>{
+    if(bi.has(i)){
+      const clean=w.replace(/[^a-zA-Z]/g,'');
+      const pre=w.match(/^[^a-zA-Z]*/)[0];
+      const post=w.match(/[^a-zA-Z]*$/)[0];
+      const sz=Math.max(80,clean.length*14);
+      html+=`${pre}<input class="blank-input" data-idx="${i}" data-answer="${clean.toLowerCase()}" style="width:${sz}px" autocomplete="off" autocorrect="off" spellcheck="false">${post} `;
+    }else{html+=w+' ';}
+  });
+  html+='</div>';
+  html+='<div class="btn-row"><button class="btn btn-primary" onclick="checkFillBlank()">확인 ✓</button><button class="btn btn-secondary" onclick="showAnswer()">정답 보기</button></div>';
+  html+='<div class="result-display" id="fillResult"></div>';
+  document.getElementById('quizContent').innerHTML=html;
+  document.querySelectorAll('.blank-input').forEach(inp=>inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkFillBlank();}));
+}
+
+function checkFillBlank(){
+  if(answered)return;
+  const inputs=document.querySelectorAll('.blank-input');
+  let allOk=true,anyFilled=false;
+  inputs.forEach(inp=>{
+    const v=inp.value.trim().toLowerCase().replace(/[^a-z]/g,'');
+    const a=inp.dataset.answer.replace(/[^a-z]/g,'');
+    if(v)anyFilled=true;
+    if(v===a){inp.classList.add('correct');inp.classList.remove('wrong');}
+    else{inp.classList.add('wrong');inp.classList.remove('correct');allOk=false;}
+  });
+  if(!anyFilled){showToast('단어를 입력해주세요!');return;}
+  answered=true;
+  const r=document.getElementById('fillResult');
+  if(allOk){correctCount++;streak++;r.className='result-display show correct-result';r.innerHTML='🎉 정답! '+currentSentence.en;updateMastery(true);showToast('정답입니다! 🔥','success');setTimeout(()=>nextSentence(),1800);}
+  else{wrongCount++;streak=0;r.className='result-display show wrong-result';r.innerHTML='❌ 정답: <span class="answer-highlight">'+currentSentence.en+'</span>';updateMastery(false);showToast('틀렸습니다!','error');}
+  updateStats();
+}
+
+function showAnswer(){
+  document.querySelectorAll('.blank-input').forEach(inp=>{inp.value=inp.dataset.answer;inp.classList.add('correct');});
+  const r=document.getElementById('fillResult');r.className='result-display show wrong-result';r.innerHTML='💡 정답: <span class="answer-highlight">'+currentSentence.en+'</span>';
+  answered=true;wrongCount++;streak=0;updateMastery(false);updateStats();
+}
+
+function renderDictation(s){
+  let html='<p style="color:var(--text-dim);font-size:13px;margin-bottom:12px;">🎧 문장을 듣고 받아 적어보세요</p>';
+  html+='<textarea class="dictation-area" id="dictArea" placeholder="들은 문장을 그대로 입력하세요..." rows="2"></textarea>';
+  html+='<div style="height:12px"></div>';
+  html+='<div class="btn-row"><button class="btn btn-primary" onclick="checkDictation()">제출 ✓</button><button class="btn btn-secondary" onclick="playSentence()">🔊 다시 듣기</button><button class="btn btn-ghost" onclick="showDictationAnswer()">정답 보기</button></div>';
+  html+='<div class="result-display" id="dictResult"></div>';
+  document.getElementById('quizContent').innerHTML=html;
+  document.getElementById('dictArea').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();checkDictation();}});
+  setTimeout(()=>playSentence(),300);
+}
+
+function norm(s){return s.toLowerCase().replace(/[^a-z\s]/g,'').replace(/\s+/g,' ').trim();}
+
+function checkDictation(){
+  if(answered)return;
+  const area=document.getElementById('dictArea');
+  const ut=area.value.trim();
+  if(!ut){showToast('문장을 입력해주세요!');return;}
+  const cWords=norm(currentSentence.en).split(' ');
+  const uWords=norm(ut).split(' ');
+  let match=0;
+  let diffHtml='';
+  for(let i=0;i<cWords.length;i++){
+    if(uWords[i]===cWords[i]){diffHtml+=`<span class="diff-correct">${cWords[i]}</span> `;match++;}
+    else if(uWords[i]){diffHtml+=`<span class="diff-wrong">${uWords[i]}</span><span class="diff-correct">${cWords[i]}</span> `;}
+    else{diffHtml+=`<span class="diff-correct">[${cWords[i]}]</span> `;}
+  }
+  const pct=Math.round(match/cWords.length*100);
+  answered=true;
+  const r=document.getElementById('dictResult');
+  if(pct===100){correctCount++;streak++;area.classList.add('correct');r.className='result-display show correct-result';r.innerHTML=`🎉 완벽해요! (${pct}%)<br>${diffHtml}`;updateMastery(true);showToast('완벽합니다! 🔥','success');setTimeout(()=>nextSentence(),2000);}
+  else{wrongCount++;streak=0;area.classList.add('wrong');r.className='result-display show wrong-result';r.innerHTML=`📊 ${pct}% 일치<br>${diffHtml}`;updateMastery(pct>=70);showToast(`${pct}% 정확도`,pct>=70?'':'error');}
+  updateStats();
+}
+
+function showDictationAnswer(){
+  const r=document.getElementById('dictResult');r.className='result-display show wrong-result';r.innerHTML='💡 정답: <span class="answer-highlight">'+currentSentence.en+'</span>';
+  document.getElementById('dictArea').classList.add('wrong');answered=true;wrongCount++;streak=0;updateMastery(false);updateStats();
+}
+
+function renderListenMode(s){
+  let html='<div style="text-align:center;padding:20px 0;">';
+  html+=`<div style="font-family:'DM Mono',monospace;font-size:18px;line-height:1.8;color:var(--text);padding:20px;background:var(--surface2);border-radius:12px;margin-bottom:16px;">${s.en}</div>`;
+  html+=`<div style="font-size:14px;color:var(--text-dim);padding:8px 16px;background:var(--surface2);border-radius:8px;display:inline-block;">${s.ko}</div>`;
+  html+='</div><div class="btn-row" style="justify-content:center;margin-top:16px;"><button class="btn btn-primary" onclick="nextSentence()">다음 문장 →</button></div>';
+  document.getElementById('quizContent').innerHTML=html;
+  setTimeout(()=>playSentence(),300);
+}
+
+function loadCurrent(){
+  if(queuePos>=queue.length){document.getElementById('quizCard').style.display='none';document.getElementById('congratsDiv').classList.add('show');return;}
+  document.getElementById('quizCard').style.display='block';document.getElementById('congratsDiv').classList.remove('show');
+  const idx=queue[queuePos];currentSentence=SENTENCES[idx];answered=false;hintVisible=false;
+  document.getElementById('sentenceNum').textContent=`SENTENCE #${idx+1} — ${queuePos+1}/${queue.length}`;
+  document.getElementById('koreanHint').className='korean-hint';document.getElementById('koreanHint').textContent=currentSentence.ko;
+  document.getElementById('currentIdx').textContent=idx+1;
+  if(currentMode==='fillblank')renderFillBlank(currentSentence);
+  else if(currentMode==='dictation')renderDictation(currentSentence);
+  else renderListenMode(currentSentence);
+  updateDots();updateStats();
+}
+
+function nextSentence(){queuePos++;loadCurrent();}
+function skipSentence(){nextSentence();}
+function prevSentence(){if(queuePos>0){queuePos--;loadCurrent();}}
+function toggleHint(){hintVisible=!hintVisible;document.getElementById('koreanHint').classList.toggle('show',hintVisible);}
+
+function updateMastery(ok){const idx=queue[queuePos];if(ok)mastered.add(idx);}
+
+function updateDots(){
+  const grid=document.getElementById('memorizedGrid');
+  const total=rangeEnd-rangeStart+1;
+  if(total>100){grid.innerHTML='';return;}
+  grid.innerHTML='';
+  for(let i=rangeStart;i<=rangeEnd;i++){
+    const d=document.createElement('div');
+    d.className='mem-dot'+(mastered.has(i)?' done':'')+(i===queue[queuePos]?' current':'');
+    d.title=`#${i+1}`;grid.appendChild(d);
+  }
+}
+
+function updateStats(){
+  document.getElementById('correctCount').textContent=correctCount;
+  document.getElementById('wrongCount').textContent=wrongCount;
+  document.getElementById('streakCount').textContent=streak;
+  document.getElementById('masteredCount').textContent=mastered.size;
+  const total=correctCount+wrongCount;
+  document.getElementById('accuracyPct').textContent=total?Math.round(correctCount/total*100)+'%':'—';
+  document.getElementById('progressFill').style.width=(queuePos/queue.length*100)+'%';
+}
+
+function restartAll(){correctCount=0;wrongCount=0;streak=0;mastered.clear();buildQueue();loadCurrent();}
+
+function showToast(msg,type){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast show'+(type?' '+type:'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+buildQueue();loadCurrent();
+</script>
+</body>
+</html>
