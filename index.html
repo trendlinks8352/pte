@@ -166,6 +166,21 @@ input[type="checkbox"]{display:none;}
 .hl{background:rgba(124,106,255,0.3);border-radius:2px;color:var(--text);}
 
 @media(max-width:600px){.logo{font-size:32px}.quiz-card{padding:22px}.sentence-display{font-size:14px}.blank-input{font-size:14px}.mode-tab{font-size:11px;padding:7px 4px;}.score-card{gap:6px}.score-val{font-size:24px}}
+
+  /* Wrong retry bar */
+  .wrong-retry-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:14px;padding:14px 20px;margin-bottom:18px;font-size:14px;color:var(--text);gap:12px;flex-wrap:wrap;}
+  .retry-btn{padding:8px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--wrong),#ff6a9e);color:white;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+  .retry-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(248,113,113,0.4);}
+  /* Keyword mode */
+  .keyword-chips{display:flex;flex-wrap:wrap;gap:8px;padding:18px;background:var(--surface2);border-radius:14px;margin-bottom:20px;min-height:56px;}
+  .kw-chip{padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-family:'DM Mono',monospace;font-size:13px;color:var(--text);cursor:pointer;transition:all 0.2s;user-select:none;}
+  .kw-chip:hover{border-color:var(--accent);color:var(--accent);}
+  .kw-chip.used{opacity:0.25;cursor:default;text-decoration:line-through;}
+  .answer-slots{font-family:'DM Mono',monospace;font-size:16px;line-height:2;margin-bottom:20px;padding:16px;background:var(--surface2);border-radius:12px;min-height:56px;color:var(--text);word-break:break-word;}
+  .slot-word{display:inline-block;background:rgba(124,106,255,0.15);border:1px solid var(--accent);border-radius:6px;padding:2px 8px;margin:2px;cursor:pointer;}
+  .slot-word:hover{background:rgba(248,113,113,0.15);border-color:var(--wrong);}
+  /* First letter mode */
+  .first-letter-display{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:6px;color:var(--accent);padding:18px 20px;background:var(--surface2);border-radius:14px;margin-bottom:18px;line-height:1.8;word-break:break-all;}
 </style>
 </head>
 <body>
@@ -214,9 +229,16 @@ input[type="checkbox"]{display:none;}
 
     <div class="mode-tabs">
       <button class="mode-tab active" onclick="setMode('fillblank')">🎧 듣고 빈칸</button>
+      <button class="mode-tab" onclick="setMode('keyword')">🔑 키워드 복원</button>
+      <button class="mode-tab" onclick="setMode('firstletter')">🔤 첫 글자</button>
       <button class="mode-tab" onclick="setMode('meaning')">💡 뜻 보고 단어</button>
       <button class="mode-tab" onclick="setMode('dictation')">✍️ 받아쓰기</button>
       <button class="mode-tab" onclick="setMode('listen')">👂 전체 듣기</button>
+    </div>
+    <!-- 틀린 문장 재도전 배너 -->
+    <div class="wrong-retry-bar" id="wrongRetryBar" style="display:none;">
+      <span>❌ 틀린 문장 <strong id="wrongRetryCount">0</strong>개 있습니다</span>
+      <button class="retry-btn" onclick="retryWrong()">🔥 틀린 것만 다시 풀기</button>
     </div>
 
     <div class="quiz-card" id="quizCard">
@@ -488,6 +510,7 @@ const SENTENCES=[
 // STATE
 // ============================================================
 let currentMode='fillblank',queue=[],queuePos=0,currentSentence=null;
+let wrongSet=new Set(); // tracks wrong sentence indices
 let correctCount=0,wrongCount=0,streak=0,mastered=new Set();
 let answered=false,ttsSpeed=0.7,repeatMode=false,hintVisible=false;
 let rangeStart=0,rangeEnd=215,shuffleMode=false;
@@ -528,10 +551,9 @@ document.getElementById('shuffleCheck').addEventListener('change',function(){shu
 // ============================================================
 function setMode(mode){
   currentMode=mode;
-  document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['fillblank','meaning','dictation','listen'][i]===mode));
-  // Show/hide TTS bar
+  document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['fillblank','keyword','firstletter','meaning','dictation','listen'][i]===mode));
   const ttsBar=document.getElementById('ttsControls');
-  ttsBar.style.display=mode==='meaning'?'none':'flex';
+  ttsBar.style.display=(mode==='meaning'||mode==='keyword'||mode==='firstletter')?'none':'flex';
   answered=false;loadCurrent();
 }
 
@@ -750,6 +772,8 @@ function loadCurrent(){
   const ttsBar=document.getElementById('ttsControls');
   ttsBar.style.display=currentMode==='meaning'?'none':'flex';
   if(currentMode==='fillblank')renderFillBlank(currentSentence);
+  else if(currentMode==='keyword')renderKeyword(currentSentence);
+  else if(currentMode==='firstletter')renderFirstLetter(currentSentence);
   else if(currentMode==='meaning')renderMeaning(currentSentence);
   else if(currentMode==='dictation')renderDictation(currentSentence);
   else renderListenMode(currentSentence);
@@ -759,8 +783,26 @@ function nextSentence(){queuePos++;loadCurrent();}
 function skipSentence(){nextSentence();}
 function prevSentence(){if(queuePos>0){queuePos--;loadCurrent();}}
 function toggleHint(){hintVisible=!hintVisible;document.getElementById('koreanHint').classList.toggle('show',hintVisible);}
-function updateMastery(ok){const idx=queue[queuePos];if(ok)mastered.add(idx);}
-function restartAll(){correctCount=0;wrongCount=0;streak=0;mastered.clear();buildQueue();loadCurrent();}
+function updateMastery(ok){
+  const idx=queue[queuePos];
+  if(ok){mastered.add(idx);wrongSet.delete(idx);}
+  else{wrongSet.add(idx);}
+  updateRetryBar();
+}
+function updateRetryBar(){
+  const bar=document.getElementById('wrongRetryBar');
+  const cnt=document.getElementById('wrongRetryCount');
+  if(wrongSet.size>0){bar.style.display='flex';cnt.textContent=wrongSet.size;}
+  else{bar.style.display='none';}
+}
+function retryWrong(){
+  if(wrongSet.size===0){showToast('틀린 문장이 없어요! 👍','success');return;}
+  queue=[...wrongSet].sort((a,b)=>a-b);
+  queuePos=0;
+  showToast(`틀린 ${queue.length}문장 재도전! 🔥`,'');
+  loadCurrent();
+}
+function restartAll(){correctCount=0;wrongCount=0;streak=0;mastered.clear();wrongSet.clear();updateRetryBar();buildQueue();loadCurrent();}
 
 // ============================================================
 // STATS / DOTS
@@ -839,6 +881,174 @@ function showToast(msg,type){
 // ============================================================
 // INIT
 // ============================================================
+
+// ============================================================
+// KEYWORD RESTORE MODE
+// ============================================================
+let kwUserWords=[];
+function renderKeyword(s){
+  // Extract key words (longer words, skip articles/prepositions)
+  const stopwords=new Set(['the','a','an','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','shall','should','may','might','must','can','could','to','of','in','on','at','by','for','with','about','as','from','and','or','but','not','it','its','this','that','these','those']);
+  const words=s.en.split(/\s+/);
+  // Pick 4-6 key words (longer & not stopwords)
+  const candidates=words.filter(w=>{const c=w.replace(/[^a-zA-Z]/g,'');return c.length>=4&&!stopwords.has(c.toLowerCase());});
+  // shuffle and pick up to 5
+  const shuffled=[...candidates].sort(()=>Math.random()-0.5).slice(0,Math.min(5,candidates.length));
+  // Also always include ALL words shuffled for reconstruction
+  const allShuffled=[...words].sort(()=>Math.random()-0.5);
+  kwUserWords=[];
+
+  let html='';
+  html+=`<div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;letter-spacing:1px;">🔑 아래 단어 힌트를 보고 전체 문장을 완성하세요</div>`;
+  // Show key word chips as hints
+  html+=`<div style="margin-bottom:14px;"><span style="font-size:11px;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;">키워드 힌트</span><div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">`;
+  shuffled.forEach(w=>{
+    const clean=w.replace(/[^a-zA-Z]/g,'');
+    html+=`<span style="padding:5px 12px;background:rgba(255,106,158,0.1);border:1px solid rgba(255,106,158,0.4);border-radius:16px;font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2);">${clean}</span>`;
+  });
+  html+='</div></div>';
+  // Word bank (all words shuffled)
+  html+='<div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px;">단어 뱅크 (클릭해서 문장 완성)</div>';
+  html+='<div class="keyword-chips" id="kwChips">';
+  allShuffled.forEach((w,i)=>{
+    html+=`<span class="kw-chip" data-word="${w}" data-idx="${i}" onclick="kwClick(this)">${w}</span>`;
+  });
+  html+='</div>';
+  html+='<div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px;">완성된 문장 (클릭하면 취소)</div>';
+  html+='<div class="answer-slots" id="kwSlots"><span style="color:var(--text-dim);font-size:14px;">여기에 단어가 쌓입니다...</span></div>';
+  html+='<div class="btn-row">';
+  html+='<button class="btn btn-primary" onclick="checkKeyword()">확인 ✓</button>';
+  html+='<button class="btn btn-secondary" onclick="kwClear()">전체 지우기</button>';
+  html+='<button class="btn btn-ghost" onclick="showKwAnswer()">정답 보기</button>';
+  html+='</div>';
+  html+='<div class="result-display" id="kwResult"></div>';
+  document.getElementById('quizContent').innerHTML=html;
+}
+function kwClick(el){
+  if(el.classList.contains('used'))return;
+  el.classList.add('used');
+  const w=el.dataset.word;
+  kwUserWords.push({word:w,chipEl:el});
+  renderKwSlots();
+}
+function renderKwSlots(){
+  const slots=document.getElementById('kwSlots');
+  if(!kwUserWords.length){slots.innerHTML='<span style="color:var(--text-dim);font-size:14px;">여기에 단어가 쌓입니다...</span>';return;}
+  slots.innerHTML=kwUserWords.map((item,i)=>`<span class="slot-word" onclick="kwRemove(${i})">${item.word}</span>`).join(' ');
+}
+function kwRemove(i){
+  const item=kwUserWords.splice(i,1)[0];
+  item.chipEl.classList.remove('used');
+  renderKwSlots();
+}
+function kwClear(){
+  kwUserWords=[];
+  document.querySelectorAll('.kw-chip').forEach(el=>el.classList.remove('used'));
+  renderKwSlots();
+}
+function checkKeyword(){
+  if(answered)return;
+  const userSentence=kwUserWords.map(x=>x.word).join(' ');
+  if(!userSentence.trim()){showToast('단어를 선택해주세요!');return;}
+  const correct=currentSentence.en;
+  const norm=s=>s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+  const r=document.getElementById('kwResult');
+  answered=true;
+  if(norm(userSentence)===norm(correct)){
+    correctCount++;streak++;
+    r.className='result-display show correct-result';
+    r.innerHTML='🎉 완벽합니다!<br><button class="btn btn-primary" style="margin-top:8px" onclick="nextSentence()">다음 문장 →</button>';
+    updateMastery(true);showToast('정답! 🔥','success');
+  }else{
+    wrongCount++;streak=0;
+    // word-level diff
+    const cw=norm(correct).split(' ');const uw=norm(userSentence).split(' ');
+    let diff='';
+    for(let i=0;i<Math.max(cw.length,uw.length);i++){
+      if(uw[i]===cw[i])diff+=`<span class="diff-correct">${cw[i]||''}</span> `;
+      else if(uw[i]&&cw[i])diff+=`<span class="diff-wrong">${uw[i]}</span><span class="diff-correct">${cw[i]}</span> `;
+      else if(cw[i])diff+=`<span class="diff-correct">[${cw[i]}]</span> `;
+    }
+    r.className='result-display show wrong-result';
+    r.innerHTML=`❌ 정답:<br><span class="answer-highlight">${correct}</span><br><br>${diff}`;
+    updateMastery(false);showToast('틀렸습니다!','error');
+  }
+  updateStats();
+}
+function showKwAnswer(){
+  const r=document.getElementById('kwResult');
+  r.className='result-display show wrong-result';
+  r.innerHTML='💡 정답: <span class="answer-highlight">'+currentSentence.en+'</span>';
+  answered=true;wrongCount++;streak=0;updateMastery(false);updateStats();
+}
+
+// ============================================================
+// FIRST LETTER MODE
+// ============================================================
+function renderFirstLetter(s){
+  // Build first-letter string
+  const words=s.en.split(/\s+/);
+  const fl=words.map(w=>{
+    const c=w.replace(/[^a-zA-Z]/g,'');
+    const pre=w.match(/^[^a-zA-Z]*/)[0];
+    const post=w.match(/[^a-zA-Z]*$/)[0];
+    return pre+(c[0]||'')+'_'.repeat(Math.max(0,c.length-1))+post;
+  }).join(' ');
+
+  let html='';
+  html+=`<div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;letter-spacing:1px;">🔤 첫 글자를 보고 전체 문장을 떠올려 보세요</div>`;
+  html+=`<div class="first-letter-display">${fl}</div>`;
+  html+=`<div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">💬 문장을 입력하세요 (대소문자 무시)</div>`;
+  html+=`<textarea class="dictation-area" id="flInput" placeholder="전체 문장을 입력하세요..." rows="2" spellcheck="false"></textarea>`;
+  html+=`<div style="height:10px"></div>`;
+  html+=`<div class="btn-row">`;
+  html+=`<button class="btn btn-primary" onclick="checkFirstLetter()">확인 ✓</button>`;
+  html+=`<button class="btn btn-secondary" onclick="playSentence()">🔊 듣기</button>`;
+  html+=`<button class="btn btn-ghost" onclick="showFlAnswer()">정답 보기</button>`;
+  html+=`</div>`;
+  html+=`<div class="result-display" id="flResult"></div>`;
+  document.getElementById('quizContent').innerHTML=html;
+  document.getElementById('flInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();checkFirstLetter();}});
+  document.getElementById('flInput').focus();
+}
+function checkFirstLetter(){
+  if(answered)return;
+  const inp=document.getElementById('flInput');
+  const ut=inp.value.trim();
+  if(!ut){showToast('문장을 입력해주세요!');return;}
+  const cW=currentSentence.en.toLowerCase().replace(/[^a-z\s]/g,'').replace(/\s+/g,' ').trim().split(' ');
+  const uW=ut.toLowerCase().replace(/[^a-z\s]/g,'').replace(/\s+/g,' ').trim().split(' ');
+  let match=0;
+  let diffHtml='';
+  for(let i=0;i<cW.length;i++){
+    if(uW[i]===cW[i]){diffHtml+=`<span class="diff-correct">${cW[i]}</span> `;match++;}
+    else if(uW[i]){diffHtml+=`<span class="diff-wrong">${uW[i]}</span><span class="diff-correct">${cW[i]}</span> `;}
+    else{diffHtml+=`<span class="diff-correct">[${cW[i]}]</span> `;}
+  }
+  const pct=Math.round(match/cW.length*100);
+  answered=true;
+  const r=document.getElementById('flResult');
+  if(pct===100){
+    correctCount++;streak++;inp.classList.add('correct');
+    r.className='result-display show correct-result';
+    r.innerHTML=`🎉 완벽! ${pct}%<br>${diffHtml}<br><button class="btn btn-primary" style="margin-top:8px" onclick="nextSentence()">다음 문장 →</button>`;
+    updateMastery(true);showToast('완벽합니다! 🔥','success');
+  }else{
+    wrongCount++;streak=0;inp.classList.add('wrong');
+    r.className='result-display show wrong-result';
+    r.innerHTML=`📊 ${pct}% 일치<br>${diffHtml}`;
+    updateMastery(pct>=70);showToast(`${pct}% 정확도`,pct>=70?'':'error');
+  }
+  updateStats();
+}
+function showFlAnswer(){
+  const r=document.getElementById('flResult');
+  r.className='result-display show wrong-result';
+  r.innerHTML='💡 정답: <span class="answer-highlight">'+currentSentence.en+'</span>';
+  const inp=document.getElementById('flInput');if(inp)inp.classList.add('wrong');
+  answered=true;wrongCount++;streak=0;updateMastery(false);updateStats();
+}
+
 buildQueue();
 loadCurrent();
 </script>
