@@ -563,7 +563,7 @@ function setMode(mode){
   document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['fillblank','keyword','firstletter','meaning','dictation','listen'][i]===mode));
   const ttsBar=document.getElementById('ttsControls');
   ttsBar.style.display=(mode==='meaning'||mode==='keyword'||mode==='firstletter')?'none':'flex';
-  answered=false;queuePos=0;loadCurrent();
+  answered=false;loadCurrent();
 }
 
 // ============================================================
@@ -767,16 +767,11 @@ function renderListenMode(s){
 // LOAD / NAV
 // ============================================================
 function loadCurrent(){
-  if(queuePos>=queue.length){
-    document.getElementById('quizCard').style.display='none';
-    document.getElementById('congratsDiv').classList.add('show');
-    const det=document.getElementById('congratsDetail');
-    if(det){
-      const acc=correctCount+wrongCount>0?Math.round(correctCount/(correctCount+wrongCount)*100):0;
-      det.textContent=`범위: ${rangeStart+1}~${rangeEnd+1}번 (${queue.length}문장) · 정답률 ${acc}% · 연속 ${streak}개`;
-    }
-    return;
-  }
+  if(!queue.length) return;
+  // queuePos가 범위를 벗어나면 마지막 문장으로 클램프 (모드 전환 등 안전 처리)
+  if(queuePos>=queue.length) queuePos=queue.length-1;
+  if(queuePos<0) queuePos=0;
+  document.getElementById('congratsDiv').classList.remove('show');
   document.getElementById('quizCard').style.display='block';
   document.getElementById('congratsDiv').classList.remove('show');
   const idx=queue[queuePos];currentSentence=SENTENCES[idx];answered=false;hintVisible=false;
@@ -794,7 +789,22 @@ function loadCurrent(){
   else renderListenMode(currentSentence);
   updateDots();updateStats();
 }
-function nextSentence(){queuePos++;loadCurrent();}
+function nextSentence(){
+  queuePos++;
+  if(queuePos>=queue.length){
+    // 진짜 완료: COMPLETE 화면 표시
+    document.getElementById('quizCard').style.display='none';
+    document.getElementById('congratsDiv').classList.add('show');
+    const det=document.getElementById('congratsDetail');
+    if(det){
+      const acc=correctCount+wrongCount>0?Math.round(correctCount/(correctCount+wrongCount)*100):0;
+      det.textContent=`범위: ${rangeStart+1}~${rangeEnd+1}번 (${queue.length}문장) · 정답률 ${acc}% · 연속 ${streak}개`;
+    }
+    updateStats();
+    return;
+  }
+  loadCurrent();
+}
 function skipSentence(){nextSentence();}
 function prevSentence(){if(queuePos>0){queuePos--;loadCurrent();}}
 function toggleHint(){hintVisible=!hintVisible;document.getElementById('koreanHint').classList.toggle('show',hintVisible);}
