@@ -259,8 +259,13 @@ input[type="checkbox"]{display:none;}
     <div class="congrats" id="congratsDiv">
       <div class="congrats-emoji">🎉</div>
       <div class="congrats-title">COMPLETE!</div>
-      <p style="color:var(--text-dim);margin-bottom:22px;font-size:15px;">모든 문장을 완주했습니다!</p>
-      <button class="btn btn-primary" onclick="restartAll()">처음부터 다시</button>
+      <p style="color:var(--text-dim);margin-bottom:8px;font-size:15px;">선택 범위를 모두 완주했습니다!</p>
+      <p style="color:var(--text-dim);margin-bottom:24px;font-size:13px;" id="congratsDetail"></p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="restartRange()">🔄 같은 범위 다시</button>
+        <button class="btn btn-secondary" onclick="restartAll()">📋 전체 처음부터</button>
+        <button class="btn btn-secondary" onclick="retryWrongFromCongrats()">🔥 틀린 것만</button>
+      </div>
     </div>
 
     <div class="nav-row">
@@ -541,8 +546,12 @@ function buildQueue(){
 function applyRange(){
   const s=parseInt(document.getElementById('rangeStart').value)-1;
   const e=parseInt(document.getElementById('rangeEnd').value)-1;
-  rangeStart=Math.max(0,Math.min(s,215));rangeEnd=Math.max(rangeStart,Math.min(e,215));
-  buildQueue();loadCurrent();
+  rangeStart=Math.max(0,Math.min(s,215));
+  rangeEnd=Math.max(rangeStart,Math.min(e,215));
+  document.getElementById('congratsDiv').classList.remove('show');
+  document.getElementById('quizCard').style.display='block';
+  buildQueue();
+  loadCurrent();
 }
 document.getElementById('shuffleCheck').addEventListener('change',function(){shuffleMode=this.checked;buildQueue();loadCurrent();});
 
@@ -760,7 +769,13 @@ function renderListenMode(s){
 function loadCurrent(){
   if(queuePos>=queue.length){
     document.getElementById('quizCard').style.display='none';
-    document.getElementById('congratsDiv').classList.add('show');return;
+    document.getElementById('congratsDiv').classList.add('show');
+    const det=document.getElementById('congratsDetail');
+    if(det){
+      const acc=correctCount+wrongCount>0?Math.round(correctCount/(correctCount+wrongCount)*100):0;
+      det.textContent=`범위: ${rangeStart+1}~${rangeEnd+1}번 (${queue.length}문장) · 정답률 ${acc}% · 연속 ${streak}개`;
+    }
+    return;
   }
   document.getElementById('quizCard').style.display='block';
   document.getElementById('congratsDiv').classList.remove('show');
@@ -770,7 +785,7 @@ function loadCurrent(){
   document.getElementById('koreanHint').textContent=currentSentence.ko;
   document.getElementById('currentIdx').textContent=idx+1;
   const ttsBar=document.getElementById('ttsControls');
-  ttsBar.style.display=currentMode==='meaning'?'none':'flex';
+  ttsBar.style.display=(currentMode==='meaning'||currentMode==='keyword'||currentMode==='firstletter')?'none':'flex';
   if(currentMode==='fillblank')renderFillBlank(currentSentence);
   else if(currentMode==='keyword')renderKeyword(currentSentence);
   else if(currentMode==='firstletter')renderFirstLetter(currentSentence);
@@ -802,7 +817,26 @@ function retryWrong(){
   showToast(`틀린 ${queue.length}문장 재도전! 🔥`,'');
   loadCurrent();
 }
-function restartAll(){correctCount=0;wrongCount=0;streak=0;mastered.clear();wrongSet.clear();updateRetryBar();buildQueue();loadCurrent();}
+function restartAll(){
+  correctCount=0;wrongCount=0;streak=0;mastered.clear();wrongSet.clear();
+  rangeStart=0;rangeEnd=215;
+  document.getElementById('rangeStart').value=1;
+  document.getElementById('rangeEnd').value=216;
+  updateRetryBar();buildQueue();loadCurrent();
+}
+function restartRange(){
+  correctCount=0;wrongCount=0;streak=0;
+  updateRetryBar();buildQueue();loadCurrent();
+}
+function retryWrongFromCongrats(){
+  if(wrongSet.size===0){showToast('틀린 문장이 없어요! 👍','success');return;}
+  queue=[...wrongSet].sort((a,b)=>a-b);
+  queuePos=0;
+  document.getElementById('congratsDiv').classList.remove('show');
+  document.getElementById('quizCard').style.display='block';
+  loadCurrent();
+  showToast('틀린 '+queue.length+'문장 재도전! 🔥','');
+}
 
 // ============================================================
 // STATS / DOTS
@@ -858,13 +892,13 @@ function renderList(){
 }
 
 function goToSentence(idx){
-  // find in queue or jump to it
   switchView('quiz');
+  // rebuild a single-item queue focused on this sentence
   const pos=queue.indexOf(idx);
   if(pos>=0){queuePos=pos;}
   else{
-    // add it temporarily at current pos
-    queue.splice(queuePos,0,idx);
+    // insert at current position cleanly
+    queue=[...queue.slice(0,queuePos),idx,...queue.slice(queuePos)];
   }
   loadCurrent();
 }
