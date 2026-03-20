@@ -563,7 +563,7 @@ function setMode(mode){
   document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['fillblank','keyword','firstletter','meaning','dictation','listen'][i]===mode));
   const ttsBar=document.getElementById('ttsControls');
   ttsBar.style.display=(mode==='meaning'||mode==='keyword'||mode==='firstletter')?'none':'flex';
-  answered=false;loadCurrent();
+  answered=false;queuePos=0;loadCurrent();
 }
 
 // ============================================================
