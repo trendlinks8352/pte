@@ -544,10 +544,17 @@ function buildQueue(){
   queue=i;queuePos=0;
 }
 function applyRange(){
-  const s=parseInt(document.getElementById('rangeStart').value)-1;
-  const e=parseInt(document.getElementById('rangeEnd').value)-1;
-  rangeStart=Math.max(0,Math.min(s,215));
-  rangeEnd=Math.max(rangeStart,Math.min(e,215));
+  const sVal=parseInt(document.getElementById('rangeStart').value);
+  const eVal=parseInt(document.getElementById('rangeEnd').value);
+  // 입력값 검증: 1~216 범위로 클램프
+  const sClamp=Math.max(1,Math.min(sVal,216));
+  const eClamp=Math.max(sClamp,Math.min(eVal,216));
+  // 화면 input도 보정된 값으로 업데이트
+  document.getElementById('rangeStart').value=sClamp;
+  document.getElementById('rangeEnd').value=eClamp;
+  // 0-based index로 변환
+  rangeStart=sClamp-1;
+  rangeEnd=eClamp-1;
   document.getElementById('congratsDiv').classList.remove('show');
   document.getElementById('quizCard').style.display='block';
   buildQueue();
@@ -792,20 +799,33 @@ function loadCurrent(){
 function nextSentence(){
   queuePos++;
   if(queuePos>=queue.length){
-    // 진짜 완료: COMPLETE 화면 표시
-    document.getElementById('quizCard').style.display='none';
-    document.getElementById('congratsDiv').classList.add('show');
-    const det=document.getElementById('congratsDetail');
-    if(det){
-      const acc=correctCount+wrongCount>0?Math.round(correctCount/(correctCount+wrongCount)*100):0;
-      det.textContent=`범위: ${rangeStart+1}~${rangeEnd+1}번 (${queue.length}문장) · 정답률 ${acc}% · 연속 ${streak}개`;
-    }
-    updateStats();
+    showComplete();
     return;
   }
   loadCurrent();
 }
-function skipSentence(){nextSentence();}
+function showComplete(){
+  document.getElementById('quizCard').style.display='none';
+  document.getElementById('congratsDiv').classList.add('show');
+  const det=document.getElementById('congratsDetail');
+  if(det){
+    const acc=correctCount+wrongCount>0?Math.round(correctCount/(correctCount+wrongCount)*100):0;
+    // queue[0]이 실제 시작 문장 인덱스, queue[queue.length-1]이 끝
+    const startNum=queue[0]+1;
+    const endNum=queue[queue.length-1]+1;
+    det.textContent=`범위: ${startNum}~${endNum}번 (${queue.length}문장) · 정답률 ${acc}% · 연속 ${streak}개`;
+  }
+  updateStats();
+}
+function skipSentence(){
+  if(queuePos>=queue.length-1){
+    // 마지막 문장에서 건너뛰기 = 완료 처리
+    nextSentence();
+  } else {
+    queuePos++;
+    loadCurrent();
+  }
+}
 function prevSentence(){if(queuePos>0){queuePos--;loadCurrent();}}
 function toggleHint(){hintVisible=!hintVisible;document.getElementById('koreanHint').classList.toggle('show',hintVisible);}
 function updateMastery(ok){
@@ -824,6 +844,9 @@ function retryWrong(){
   if(wrongSet.size===0){showToast('틀린 문장이 없어요! 👍','success');return;}
   queue=[...wrongSet].sort((a,b)=>a-b);
   queuePos=0;
+  // congratsDiv 숨기고 quizCard 보이기
+  document.getElementById('congratsDiv').classList.remove('show');
+  document.getElementById('quizCard').style.display='block';
   showToast(`틀린 ${queue.length}문장 재도전! 🔥`,'');
   loadCurrent();
 }
