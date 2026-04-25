@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English Master — 206 Sentences</title>
+<title>English Master — 230 Sentences</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c27;--border:#2a2a3a;--accent:#7c6aff;--accent2:#ff6a9e;--accent3:#6affda;--text:#e8e8f0;--text-dim:#7a7a9a;--correct:#4ade80;--wrong:#f87171;--warn:#fbbf24;}
@@ -188,7 +188,7 @@ input[type="checkbox"]{display:none;}
   <header>
     <div>
       <div class="logo">ENGLISH<span>MASTER</span></div>
-      <div style="font-size:11px;color:var(--text-dim);margin-top:4px;letter-spacing:1px;">206 ACADEMIC SENTENCES</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px;letter-spacing:1px;">211 ACADEMIC SENTENCES</div>
     </div>
     <div class="stats-bar">
       <div class="stat"><div class="stat-val" id="masteredCount">0</div><div class="stat-label">Mastered</div></div>
@@ -198,11 +198,13 @@ input[type="checkbox"]{display:none;}
 
   <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
 
+  <!-- Top nav: Quiz / List -->
   <div class="top-nav">
     <button class="top-nav-btn active" onclick="switchView('quiz')">📝 퀴즈</button>
     <button class="top-nav-btn" onclick="switchView('list')">📋 전체 목록</button>
   </div>
 
+  <!-- ====== QUIZ VIEW ====== -->
   <div id="quizView">
     <div class="memorized-grid" id="memorizedGrid"></div>
     <div class="score-card">
@@ -214,9 +216,9 @@ input[type="checkbox"]{display:none;}
 
     <div class="settings-wrap">
       <span class="range-label">범위:</span>
-      <input type="number" class="range-input" id="rangeStart" value="1" min="1" max="206">
+      <input type="number" class="range-input" id="rangeStart" value="1" min="1" max="211">
       <span class="range-label">~</span>
-      <input type="number" class="range-input" id="rangeEnd" value="206" min="1" max="206">
+      <input type="number" class="range-input" id="rangeEnd" value="211" min="1" max="211">
       <button class="btn btn-secondary" onclick="applyRange()" style="padding:7px 14px;font-size:12px;">적용</button>
       <label class="shuffle-toggle" style="margin-left:auto;">
         <input type="checkbox" id="shuffleCheck">
@@ -233,6 +235,7 @@ input[type="checkbox"]{display:none;}
       <button class="mode-tab" onclick="setMode('dictation')">✍️ 받아쓰기</button>
       <button class="mode-tab" onclick="setMode('listen')">👂 전체 듣기</button>
     </div>
+    <!-- 틀린 문장 재도전 배너 -->
     <div class="wrong-retry-bar" id="wrongRetryBar" style="display:none;">
       <span>❌ 틀린 문장 <strong id="wrongRetryCount">0</strong>개 있습니다</span>
       <button class="retry-btn" onclick="retryWrong()">🔥 틀린 것만 다시 풀기</button>
@@ -272,12 +275,13 @@ input[type="checkbox"]{display:none;}
     </div>
   </div>
 
+  <!-- ====== LIST VIEW ====== -->
   <div class="list-view" id="listView">
     <input class="list-search" id="listSearch" placeholder="🔍 영어 또는 한국어로 검색..." oninput="renderList()">
     <div class="list-stats-row">
-      <div class="list-stat-chip">전체 206문장</div>
+      <div class="list-stat-chip">전체 230문장</div>
       <div class="list-stat-chip done" id="listMasteredChip">완료 0개</div>
-      <div class="list-stat-chip" id="listRemainChip">남은 206개</div>
+      <div class="list-stat-chip" id="listRemainChip">남은 230개</div>
     </div>
     <div class="sentence-list" id="sentenceList"></div>
   </div>
@@ -290,222 +294,225 @@ input[type="checkbox"]{display:none;}
 // DATA — sentences + key word meanings
 // ============================================================
 const SENTENCES=[
-{en:"The celebrated theory is still the source of great controversy.",ko:"이 유명한 이론은 여전히 큰 논란의 대상이 되고 있습니다.",words:[{w:"celebrated",pos:"adj",ko:"유명한",hint:"cel_______d"},{w:"controversy",pos:"noun",ko:"논란",hint:"con________y"}]},
-{en:"A good architectural structure should be useful, durable and beautiful.",ko:"좋은 건축 구조는 유용하고 내구성이 뛰어나며 아름다워야 합니다.",words:[{w:"architectural",pos:"adj",ko:"건축학적인",hint:"arc__________l"},{w:"durable",pos:"adj",ko:"내구성 있는",hint:"dur____e"}]},
-{en:"A group meeting will be held tomorrow in the library conference room.",ko:"내일 도서관 회의실에서 그룹 회의가 열립니다.",words:[{w:"conference",pos:"noun",ko:"회의",hint:"con______ce"}]},
-{en:"Educational level is found to be related to social and economic background.",ko:"교육 수준은 사회적, 경제적 배경과 관련이 있는 것으로 나타났습니다.",words:[{w:"educational",pos:"adj",ko:"교육적인",hint:"edu_______al"},{w:"economic",pos:"adj",ko:"경제적인",hint:"eco_____c"}]},
-{en:"Tutorials are scheduled in the final week of the term.",ko:"튜토리얼은 학기 마지막 주에 예정되어 있습니다.",words:[{w:"scheduled",pos:"verb",ko:"예정된",hint:"sch_____ed"},{w:"term",pos:"noun",ko:"학기",hint:"t__m"}]},
-{en:"All dissertations must be accompanied by a submission form.",ko:"모든 논문에는 제출 양식이 첨부되어야 합니다.",words:[{w:"dissertations",pos:"noun",ko:"논문",hint:"dis_________ns"},{w:"submission",pos:"noun",ko:"제출",hint:"sub______on"}]},
-{en:"All of the assignments must be submitted in person to the faculty office.",ko:"모든 과제는 교직원 사무실에 직접 제출해야 합니다.",words:[{w:"assignments",pos:"noun",ko:"과제",hint:"ass_______ts"},{w:"faculty",pos:"noun",ko:"교수진",hint:"fac___y"}]},
-{en:"The toughest part of postgraduate education is funding.",ko:"대학원 교육에서 가장 어려운 부분은 자금 조달입니다.",words:[{w:"postgraduate",pos:"adj",ko:"대학원의",hint:"pos_________te"},{w:"funding",pos:"noun",ko:"자금 조달",hint:"fun____g"}]},
-{en:"Our view is that educational reforms have been inadequately implemented.",ko:"우리의 견해는 교육 개혁이 부적절하게 시행되었다는 것입니다.",words:[{w:"reforms",pos:"noun",ko:"개혁",hint:"ref___ms"},{w:"inadequately",pos:"adv",ko:"부적절하게",hint:"ina________ly"}]},
-{en:"An introduction is an essential element of presentation.",ko:"소개는 프레젠테이션의 필수 요소입니다.",words:[{w:"introduction",pos:"noun",ko:"도입",hint:"int_________on"},{w:"essential",pos:"adj",ko:"필수적인",hint:"ess_____al"}]},
-{en:"The assignments should be submitted to the department office before the deadlines.",ko:"과제는 마감일 전에 부서 사무실에 제출해야 합니다.",words:[{w:"department",pos:"noun",ko:"부서",hint:"dep______nt"},{w:"deadlines",pos:"noun",ko:"마감일",hint:"dea______es"}]},
-{en:"Before attending classes, you must register online or by post.",ko:"수업에 참석하기 전에 온라인 또는 우편으로 등록해야 합니다.",words:[{w:"attending",pos:"verb",ko:"참석하는",hint:"att_____ng"},{w:"register",pos:"verb",ko:"등록하다",hint:"reg_____r"}]},
-{en:"Certain scientific principles must be learned verbally or by logical deduction.",ko:"특정 과학 원리는 구두로 또는 논리적 추론을 통해 학습해야 합니다.",words:[{w:"principles",pos:"noun",ko:"원리",hint:"pri______es"},{w:"deduction",pos:"noun",ko:"추론",hint:"ded_____on"}]},
-{en:"Daily practice can build confidence and improve skills.",ko:"매일 연습하면 자신감을 키우고 기술을 향상시킬 수 있습니다.",words:[{w:"confidence",pos:"noun",ko:"자신감",hint:"con______ce"},{w:"improve",pos:"verb",ko:"향상시키다",hint:"imp____e"}]},
-{en:"Human beings compete with other living things for resources and space.",ko:"인간은 자원과 공간을 놓고 다른 생명체와 경쟁합니다.",words:[{w:"compete",pos:"verb",ko:"경쟁하다",hint:"com____e"},{w:"resources",pos:"noun",ko:"자원",hint:"res_____ces"}]},
-{en:"Good research delivers practical benefits for real people.",ko:"좋은 연구는 실제 사람들에게 실질적인 혜택을 제공합니다.",words:[{w:"practical",pos:"adj",ko:"실용적인",hint:"pra_____al"},{w:"benefits",pos:"noun",ko:"혜택",hint:"ben____ts"}]},
-{en:"He landed a job in a very prestigious law firm.",ko:"그는 매우 명망 있는 로펌에 취직했습니다.",words:[{w:"prestigious",pos:"adj",ko:"명망 있는",hint:"pre______us"},{w:"firm",pos:"noun",ko:"회사",hint:"f__m"}]},
-{en:"I thought it was through the small meeting room.",ko:"작은 회의실을 통해서인 줄 알았습니다.",words:[{w:"thought",pos:"verb",ko:"생각했다",hint:"tho____t"},{w:"meeting",pos:"noun",ko:"회의",hint:"mee____g"}]},
-{en:"If finance is a cause of concern, scholarships may be available.",ko:"재정적인 문제가 우려되는 경우 장학금을 받을 수 있습니다.",words:[{w:"concern",pos:"noun",ko:"우려",hint:"con____n"},{w:"scholarships",pos:"noun",ko:"장학금",hint:"sch_________ps"}]},
-{en:"If you need additional help, visit the student resource center.",ko:"추가 도움이 필요하면 학생 리소스 센터를 방문하세요.",words:[{w:"additional",pos:"adj",ko:"추가적인",hint:"add______al"},{w:"resource",pos:"noun",ko:"자원",hint:"res____ce"}]},
-{en:"It may not be possible to solve the problem easily.",ko:"문제를 쉽게 해결하지 못할 수도 있습니다.",words:[{w:"possible",pos:"adj",ko:"가능한",hint:"pos____le"},{w:"solve",pos:"verb",ko:"해결하다",hint:"sol_e"}]},
-{en:"Library reference desks hold a lot of materials on academic history.",ko:"도서관 자료실에는 학술 역사에 관한 많은 자료가 있습니다.",words:[{w:"reference",pos:"noun",ko:"참조",hint:"ref_____ce"},{w:"academic",pos:"adj",ko:"학술적인",hint:"aca_____c"}]},
-{en:"Listening is the key skill needed to succeed in this course.",ko:"경청은 이 과정에서 성공하는 데 필요한 핵심 기술입니다.",words:[{w:"succeed",pos:"verb",ko:"성공하다",hint:"suc____d"},{w:"course",pos:"noun",ko:"과정",hint:"cou__e"}]},
-{en:"Medical researchers have focused on causes of diseases and treatments.",ko:"의학 연구자들은 질병의 원인과 치료법에 집중해 왔습니다.",words:[{w:"researchers",pos:"noun",ko:"연구자들",hint:"res_______rs"},{w:"treatments",pos:"noun",ko:"치료법",hint:"tre______ts"}]},
-{en:"Mutually exclusive events can be described as either complementary or opposite.",ko:"상호 배타적인 이벤트는 상호 보완적이거나 반대되는 것으로 설명할 수 있습니다.",words:[{w:"exclusive",pos:"adj",ko:"배타적인",hint:"exc_____ve"},{w:"complementary",pos:"adj",ko:"상호 보완적인",hint:"com__________ry"}]},
-{en:"Organizational failure is considered from various perspectives in academic literature.",ko:"조직의 실패는 학술 문헌에서 다양한 관점에서 고려됩니다.",words:[{w:"organizational",pos:"adj",ko:"조직의",hint:"org___________al"},{w:"perspectives",pos:"noun",ko:"관점",hint:"per_________es"}]},
-{en:"Plants are the living things that can grow on land or in water.",ko:"식물은 육지나 물에서 자랄 수 있는 생명체입니다.",words:[{w:"living",pos:"adj",ko:"살아있는",hint:"liv__g"},{w:"grow",pos:"verb",ko:"자라다",hint:"gr_w"}]},
-{en:"Please make sure you have correctly cited all the necessary materials.",ko:"필요한 모든 자료를 올바르게 인용했는지 확인하세요.",words:[{w:"correctly",pos:"adv",ko:"올바르게",hint:"cor_____ly"},{w:"necessary",pos:"adj",ko:"필수적인",hint:"nec_____ry"}]},
-{en:"Public perception about biotechnology is crucial for developing scientific consensus.",ko:"생명공학에 대한 대중의 인식은 과학적 공감대를 형성하는 데 매우 중요합니다.",words:[{w:"perception",pos:"noun",ko:"인식",hint:"per______on"},{w:"consensus",pos:"noun",ko:"공감대",hint:"con_____us"}]},
-{en:"Remember to sign the attendance register before leaving the lecture hall.",ko:"강의실을 떠나기 전에 출석부에 서명하는 것을 잊지 마세요.",words:[{w:"attendance",pos:"noun",ko:"출석",hint:"att______ce"},{w:"register",pos:"noun",ko:"등록부",hint:"reg_____r"}]},
-{en:"Remember, the prestigious election of stewardship has strict eligibility criteria.",ko:"기억하세요, 권위 있는 지도자 선출은 엄격한 자격 기준이 있습니다.",words:[{w:"prestigious",pos:"adj",ko:"권위 있는",hint:"pre______us"},{w:"eligibility",pos:"noun",ko:"자격",hint:"eli________ty"}]},
-{en:"Resources and materials are on hold at the library reference desk.",ko:"리소스와 자료는 도서관 참고 데스크에 보관되어 있습니다.",words:[{w:"resources",pos:"noun",ko:"자원",hint:"res_____ces"},{w:"reference",pos:"noun",ko:"참조",hint:"ref_____ce"}]},
-{en:"Many departments have their own special book collections.",ko:"많은 부서에서 자체적으로 특별한 도서 컬렉션을 보유하고 있습니다.",words:[{w:"departments",pos:"noun",ko:"부서들",hint:"dep_______ts"},{w:"collections",pos:"noun",ko:"컬렉션",hint:"col_______ns"}]},
-{en:"Some economists argue that the entire financial system is fatally flawed.",ko:"일부 경제학자들은 금융 시스템 전체에 치명적인 결함이 있다고 주장합니다.",words:[{w:"economists",pos:"noun",ko:"경제학자들",hint:"eco______sts"},{w:"fatally",pos:"adv",ko:"치명적으로",hint:"fat____y"}]},
-{en:"Students have the options to live in college residences or apartments.",ko:"학생들은 대학 기숙사 또는 아파트에서 거주할 수 있습니다.",words:[{w:"residences",pos:"noun",ko:"기숙사",hint:"res______ces"},{w:"apartments",pos:"noun",ko:"아파트",hint:"apa______nts"}]},
-{en:"Students who are successful have good strategies for learning.",ko:"성공한 학생은 좋은 학습 전략을 가지고 있습니다.",words:[{w:"successful",pos:"adj",ko:"성공한",hint:"suc______ul"},{w:"strategies",pos:"noun",ko:"전략",hint:"str______ies"}]},
-{en:"The application processes may take longer than expected.",ko:"신청 절차가 예상보다 오래 걸릴 수 있습니다.",words:[{w:"application",pos:"noun",ko:"신청",hint:"app_______on"},{w:"processes",pos:"noun",ko:"절차",hint:"pro_____es"}]},
-{en:"The cafeteria features soup, salads, sandwiches, chicken and fish.",ko:"카페테리아에서는 수프, 샐러드, 샌드위치, 치킨, 생선 요리를 맛볼 수 있습니다.",words:[{w:"cafeteria",pos:"noun",ko:"구내식당",hint:"caf_____ia"},{w:"features",pos:"verb",ko:"특징으로 하다",hint:"fea____es"}]},
-{en:"The chemistry building is located near the entrance to the campus.",ko:"화학 건물은 캠퍼스 입구 근처에 있습니다.",words:[{w:"chemistry",pos:"noun",ko:"화학",hint:"che_____ry"},{w:"entrance",pos:"noun",ko:"입구",hint:"ent____ce"}]},
-{en:"Rising inflation may indicate an increase in the demand for consumer products.",ko:"인플레이션 상승은 소비재에 대한 수요 증가를 나타낼 수 있습니다.",words:[{w:"inflation",pos:"noun",ko:"인플레이션",hint:"inf_____on"},{w:"indicate",pos:"verb",ko:"나타내다",hint:"ind_____e"}]},
-{en:"The faculty staff are very approachable, friendly and extremely helpful.",ko:"교수진은 매우 친근하고 친절하며 매우 도움이 됩니다.",words:[{w:"approachable",pos:"adj",ko:"다가가기 쉬운",hint:"app________le"},{w:"extremely",pos:"adv",ko:"매우",hint:"ext_____ly"}]},
-{en:"The history of the university is a long and interesting one.",ko:"대학의 역사는 길고 흥미롭습니다.",words:[{w:"university",pos:"noun",ko:"대학교",hint:"uni______ity"},{w:"interesting",pos:"adj",ko:"흥미로운",hint:"int_______ing"}]},
-{en:"The island is located at the south end of the bay.",ko:"이 섬은 만의 남쪽 끝에 위치해 있습니다.",words:[{w:"located",pos:"verb",ko:"위치한",hint:"loc____d"},{w:"south",pos:"adj",ko:"남쪽의",hint:"sou__h"}]},
-{en:"The massive accumulation of data was converted into a communicable argument.",ko:"방대한 데이터의 축적은 소통 가능한 논쟁으로 전환되었습니다.",words:[{w:"massive",pos:"adj",ko:"거대한",hint:"mas___e"},{w:"accumulation",pos:"noun",ko:"축적",hint:"acc_________on"}]},
-{en:"The most popular courses still have a few places left.",ko:"가장 인기 있는 코스는 아직 자리가 몇 개 남아있습니다.",words:[{w:"popular",pos:"adj",ko:"인기 있는",hint:"pop___ar"},{w:"courses",pos:"noun",ko:"강좌",hint:"cou___es"}]},
-{en:"The results of the study underscored the importance of early detection.",ko:"연구 결과는 조기 발견의 중요성을 강조했습니다.",words:[{w:"underscored",pos:"verb",ko:"강조했다",hint:"und_______ed"},{w:"detection",pos:"noun",ko:"발견",hint:"det_____on"}]},
-{en:"Safety glasses should be worn while doing experiments in the lab.",ko:"실험실에서 실험을 할 때는 보안경을 착용해야 합니다.",words:[{w:"experiments",pos:"noun",ko:"실험",hint:"exp_______nts"},{w:"laboratory",pos:"noun",ko:"실험실",hint:"lab_______ry"}]},
-{en:"There are some doubts about whether these events actually occurred.",ko:"이러한 이벤트가 실제로 발생했는지에 대한 의구심이 있습니다.",words:[{w:"doubts",pos:"noun",ko:"의심",hint:"dou__s"},{w:"occurred",pos:"verb",ko:"발생했다",hint:"occ____d"}]},
-{en:"There is a clear need for further research in this field.",ko:"이 분야에 대한 추가 연구가 필요한 것은 분명합니다.",words:[{w:"further",pos:"adj",ko:"추가적인",hint:"fur___r"},{w:"research",pos:"noun",ko:"연구",hint:"res____ch"}]},
-{en:"There is clearly a need for further research in this field.",ko:"이 분야에 대한 추가 연구가 필요한 것은 분명합니다.",words:[{w:"clearly",pos:"adv",ko:"분명히",hint:"cle___ly"},{w:"research",pos:"noun",ko:"연구",hint:"res____ch"}]},
-{en:"This class will look at the structure of an essay.",ko:"이 수업에서는 에세이의 구조를 살펴봅니다.",words:[{w:"structure",pos:"noun",ko:"구조",hint:"str_____e"},{w:"essay",pos:"noun",ko:"에세이",hint:"ess_y"}]},
-{en:"Water filters on campus will discourage the unnecessary use of plastic bottles.",ko:"캠퍼스에 정수 필터를 설치하면 불필요한 플라스틱 병 사용을 줄일 수 있습니다.",words:[{w:"discourage",pos:"verb",ko:"억제하다",hint:"dis______ge"},{w:"unnecessary",pos:"adj",ko:"불필요한",hint:"unn________ry"}]},
-{en:"We have not yet achieved equality in our society.",ko:"우리 사회는 아직 평등을 이루지 못했습니다.",words:[{w:"achieved",pos:"verb",ko:"달성한",hint:"ach____d"},{w:"equality",pos:"noun",ko:"평등",hint:"equ____ty"}]},
-{en:"We study science to understand and appreciate the world around us.",ko:"우리는 주변 세계를 이해하고 감사하기 위해 과학을 공부합니다.",words:[{w:"appreciate",pos:"verb",ko:"감사하다",hint:"app______te"},{w:"science",pos:"noun",ko:"과학",hint:"sci__ce"}]},
-{en:"Parents' talk to children tends to be simplified.",ko:"부모가 자녀와 대화하는 방식은 단순화되는 경향이 있습니다.",words:[{w:"simplified",pos:"verb",ko:"단순화된",hint:"sim______ed"},{w:"tends",pos:"verb",ko:"경향이 있다",hint:"ten_s"}]},
-{en:"You will acquire many skills during the academic studies.",ko:"학업을 진행하는 동안 많은 기술을 습득하게 됩니다.",words:[{w:"acquire",pos:"verb",ko:"습득하다",hint:"acq___e"},{w:"academic",pos:"adj",ko:"학문적인",hint:"aca_____c"}]},
-{en:"Speak to your tutor if you need further assistance.",ko:"추가 도움이 필요하면 튜터에게 문의하세요.",words:[{w:"tutor",pos:"noun",ko:"개인 교사",hint:"tut_r"},{w:"assistance",pos:"noun",ko:"지원",hint:"ass______ce"}]},
-{en:"Education and training provide important skills for the labor force.",ko:"교육과 훈련은 노동력에게 중요한 기술을 제공합니다.",words:[{w:"training",pos:"noun",ko:"훈련",hint:"tra____ng"},{w:"labor",pos:"noun",ko:"노동",hint:"lab_r"}]},
-{en:"There have been many changes recently in the mathematics department.",ko:"최근 수학과에 많은 변화가 있었습니다.",words:[{w:"recently",pos:"adv",ko:"최근에",hint:"rec____ly"},{w:"mathematics",pos:"noun",ko:"수학",hint:"mat_______ics"}]},
-{en:"Those who are considering a career in marketing should attend the talk.",ko:"마케팅 분야로 진로를 고려하고 있다면 이 강연에 꼭 참석하세요.",words:[{w:"considering",pos:"verb",ko:"고려하는",hint:"con_______ing"},{w:"marketing",pos:"noun",ko:"마케팅",hint:"mar_____ng"}]},
-{en:"The university has invested in new technologies designed to support learning.",ko:"대학은 학습을 지원하기 위해 고안된 새로운 기술에 투자했습니다.",words:[{w:"invested",pos:"verb",ko:"투자했다",hint:"inv____ed"},{w:"technologies",pos:"noun",ko:"기술들",hint:"tec________ies"}]},
-{en:"A good academic paper should present a clear argument.",ko:"좋은 학술 논문은 명확한 논거를 제시해야 합니다.",words:[{w:"academic",pos:"adj",ko:"학술적인",hint:"aca_____c"},{w:"argument",pos:"noun",ko:"논거",hint:"arg_____nt"}]},
-{en:"A good research assistant is not afraid to ask questions.",ko:"훌륭한 연구 조교는 질문을 두려워하지 않습니다.",words:[{w:"research",pos:"noun",ko:"연구",hint:"res____ch"},{w:"assistant",pos:"noun",ko:"조교",hint:"ass_____nt"}]},
-{en:"Collaboration between departments is a feature of successful companies.",ko:"부서 간 협업은 성공적인 기업의 특징입니다.",words:[{w:"collaboration",pos:"noun",ko:"협업",hint:"col_________on"},{w:"successful",pos:"adj",ko:"성공적인",hint:"suc______ul"}]},
-{en:"Enrolling in a double major may increase your career options.",ko:"복수 전공을 등록하면 커리어 선택의 폭이 넓어질 수 있습니다.",words:[{w:"enrolling",pos:"verb",ko:"등록하는",hint:"enr____ng"},{w:"career",pos:"noun",ko:"경력",hint:"car__r"}]},
-{en:"Geography is generally divided into two main branches, human and physical.",ko:"지리학은 일반적으로 인적 지리와 물리적 지리의 두 가지 주요 분야로 나뉩니다.",words:[{w:"geography",pos:"noun",ko:"지리학",hint:"geo_____hy"},{w:"physical",pos:"adj",ko:"물리적인",hint:"phy____al"}]},
-{en:"In this language course, we focus on both fluency and accuracy.",ko:"이 언어 과정에서는 유창함과 정확성 모두에 중점을 둡니다.",words:[{w:"fluency",pos:"noun",ko:"유창함",hint:"flu___cy"},{w:"accuracy",pos:"noun",ko:"정확성",hint:"acc___cy"}]},
-{en:"This course provides the opportunity to get valuable industry experience.",ko:"이 과정은 귀중한 업계 경험을 쌓을 수 있는 기회를 제공합니다.",words:[{w:"opportunity",pos:"noun",ko:"기회",hint:"opp_______ty"},{w:"valuable",pos:"adj",ko:"귀중한",hint:"val____le"}]},
-{en:"Read the safety instructions before using any equipment in the workshop.",ko:"워크샵에서 장비를 사용하기 전에 안전 지침을 읽어보세요.",words:[{w:"instructions",pos:"noun",ko:"지침",hint:"ins_______ons"},{w:"equipment",pos:"noun",ko:"장비",hint:"equ_____nt"}]},
-{en:"Essays and assignments are spread out across the academic year.",ko:"에세이와 과제는 학년 전체에 걸쳐 분산되어 있습니다.",words:[{w:"assignments",pos:"noun",ko:"과제",hint:"ass_______ts"},{w:"spread",pos:"verb",ko:"분산된",hint:"spr__d"}]},
-{en:"Continuing students will be sent the necessary application forms.",ko:"계속 수강하는 학생에게는 필요한 신청서가 발송됩니다.",words:[{w:"continuing",pos:"adj",ko:"계속하는",hint:"con_______ng"},{w:"application",pos:"noun",ko:"신청서",hint:"app_______on"}]},
-{en:"Calculators may not be used during the examination.",ko:"시험 중에는 계산기를 사용할 수 없습니다.",words:[{w:"calculators",pos:"noun",ko:"계산기",hint:"cal________rs"},{w:"examination",pos:"noun",ko:"시험",hint:"exa________on"}]},
-{en:"The elective course introduces engineering students to construction practices and concepts.",ko:"이 선택 과목은 공학도에게 건설 실무와 개념을 소개합니다.",words:[{w:"elective",pos:"adj",ko:"선택의",hint:"ele____ve"},{w:"construction",pos:"noun",ko:"건설",hint:"con_______ion"}]},
-{en:"Our new medical students must attend the talk about optional courses.",ko:"신입 의대생은 선택 과목에 대한 강연에 반드시 참석해야 합니다.",words:[{w:"medical",pos:"adj",ko:"의학의",hint:"med___al"},{w:"optional",pos:"adj",ko:"선택적인",hint:"opt____al"}]},
-{en:"A professor took one year off to work on her book.",ko:"한 교수는 책 작업을 위해 1년간 휴직했습니다.",words:[{w:"professor",pos:"noun",ko:"교수",hint:"pro_____or"}]},
-{en:"This problem is complex and difficult to explain.",ko:"이 문제는 복잡하고 설명하기 어렵습니다.",words:[{w:"complex",pos:"adj",ko:"복잡한",hint:"com___ex"},{w:"difficult",pos:"adj",ko:"어려운",hint:"dif_____lt"}]},
-{en:"Scientists were unsure when the early men first left Africa.",ko:"과학자들은 초기 인류가 언제 아프리카를 처음 떠났는지 확신하지 못했습니다.",words:[{w:"scientists",pos:"noun",ko:"과학자들",hint:"sci______sts"},{w:"unsure",pos:"adj",ko:"확신하지 못하는",hint:"uns__e"}]},
-{en:"The printers automatically print on both sides of each page.",ko:"프린터는 각 페이지의 양면을 자동으로 인쇄합니다.",words:[{w:"automatically",pos:"adv",ko:"자동으로",hint:"aut_________lly"},{w:"printers",pos:"noun",ko:"프린터",hint:"pri____rs"}]},
-{en:"There is a widely believed perception that engineering is for boys.",ko:"공학은 남자아이들이나 하는 것이라는 인식이 널리 퍼져 있습니다.",words:[{w:"perception",pos:"noun",ko:"인식",hint:"per______on"},{w:"engineering",pos:"noun",ko:"공학",hint:"eng________ng"}]},
-{en:"Time and distance are used to calculate speed.",ko:"속도 계산에는 시간과 거리가 사용됩니다.",words:[{w:"distance",pos:"noun",ko:"거리",hint:"dis____ce"},{w:"calculate",pos:"verb",ko:"계산하다",hint:"cal_____te"}]},
-{en:"Distance learning allows you to develop a career around your commitments.",ko:"원격 학습을 통해 약속을 중심으로 커리어를 개발할 수 있습니다.",words:[{w:"distance",pos:"noun",ko:"원격",hint:"dis____ce"},{w:"commitments",pos:"noun",ko:"약속",hint:"com_______nts"}]},
-{en:"Every student has regular meetings with his or her personal tutor.",ko:"모든 학생은 개인 튜터와 정기적인 미팅을 갖습니다.",words:[{w:"regular",pos:"adj",ko:"정기적인",hint:"reg___r"},{w:"personal",pos:"adj",ko:"개인적인",hint:"per____al"}]},
-{en:"Castles were designed to intimidate both local people and enemies.",ko:"성은 지역 주민과 적 모두를 위협할 수 있도록 설계되었습니다.",words:[{w:"intimidate",pos:"verb",ko:"위협하다",hint:"int______te"},{w:"enemies",pos:"noun",ko:"적",hint:"ene___es"}]},
-{en:"The opening hours of the library are reduced during summer.",ko:"여름철에는 도서관 운영 시간이 단축됩니다.",words:[{w:"opening",pos:"adj",ko:"개장",hint:"ope____g"},{w:"reduced",pos:"verb",ko:"단축된",hint:"red___d"}]},
-{en:"A laptop computer has been found in the biology lab.",ko:"생물학 실험실에서 노트북 컴퓨터가 발견되었습니다.",words:[{w:"laptop",pos:"noun",ko:"노트북",hint:"lap__p"},{w:"biology",pos:"noun",ko:"생물학",hint:"bio___gy"}]},
-{en:"His appointment to the Minister of Culture was seen as a demotion.",ko:"그의 문화부 장관 임명은 강등으로 여겨졌습니다.",words:[{w:"appointment",pos:"noun",ko:"임명",hint:"app_______nt"},{w:"demotion",pos:"noun",ko:"강등",hint:"dem____on"}]},
-{en:"Measures must be taken to prevent the unemployment rate from increasing.",ko:"실업률 증가를 막기 위한 조치를 취해야 합니다.",words:[{w:"measures",pos:"noun",ko:"조치",hint:"mea____es"},{w:"unemployment",pos:"noun",ko:"실업",hint:"une_________nt"}]},
-{en:"Request for late applications will not be accepted under any circumstances.",ko:"늦은 신청 요청은 어떠한 경우에도 허용되지 않습니다.",words:[{w:"applications",pos:"noun",ko:"신청서",hint:"app________ons"},{w:"circumstances",pos:"noun",ko:"상황",hint:"cir__________es"}]},
-{en:"Salt is produced from seawater or extracted from the ground.",ko:"소금은 바닷물에서 생산되거나 땅에서 추출됩니다.",words:[{w:"produced",pos:"verb",ko:"생산된",hint:"pro____d"},{w:"extracted",pos:"verb",ko:"추출된",hint:"ext_____d"}]},
-{en:"The news will not be received until the following week.",ko:"이 소식은 다음 주까지 수신되지 않습니다.",words:[{w:"received",pos:"verb",ko:"수신된",hint:"rec____d"},{w:"following",pos:"adj",ko:"다음의",hint:"fol_____ng"}]},
-{en:"You do not need specialist knowledge to enjoy this book.",ko:"전문 지식이 없어도 이 책을 즐길 수 있습니다.",words:[{w:"specialist",pos:"noun",ko:"전문가",hint:"spe______ist"},{w:"knowledge",pos:"noun",ko:"지식",hint:"kno_____ge"}]},
-{en:"The area has a variety of underwater habitats and species.",ko:"이 지역에는 다양한 수중 서식지와 종이 있습니다.",words:[{w:"variety",pos:"noun",ko:"다양함",hint:"var____ty"},{w:"underwater",pos:"adj",ko:"수중의",hint:"und_______er"}]},
-{en:"Your ideas are discussed and debated in seminars and tutorials.",ko:"여러분의 아이디어는 세미나와 튜토리얼에서 논의되고 토론됩니다.",words:[{w:"discussed",pos:"verb",ko:"논의된",hint:"dis_____d"},{w:"seminars",pos:"noun",ko:"세미나",hint:"sem____rs"}]},
-{en:"Our study program equips students with essential skills for university.",ko:"저희의 학습 프로그램은 학생들에게 대학에 필요한 필수 기술을 제공합니다.",words:[{w:"program",pos:"noun",ko:"프로그램",hint:"pro___am"},{w:"equips",pos:"verb",ko:"갖추게 하다",hint:"equ__s"}]},
-{en:"Many food crops require large amounts of water and fertilizer.",ko:"많은 식량 작물에는 많은 양의 물과 비료가 필요합니다.",words:[{w:"require",pos:"verb",ko:"필요로 하다",hint:"req___e"},{w:"fertilizer",pos:"noun",ko:"비료",hint:"fer______er"}]},
-{en:"Classical mechanics is sometimes considered as a branch of applied mathematics.",ko:"고전 역학은 때때로 응용 수학의 한 분야로 간주되기도 합니다.",words:[{w:"mechanics",pos:"noun",ko:"역학",hint:"mec_____cs"},{w:"considered",pos:"verb",ko:"간주된",hint:"con______ed"}]},
-{en:"Students should leave their bags on the table by the door.",ko:"학생들은 문 옆 테이블 위에 가방을 놓아두어야 합니다.",words:[{w:"leave",pos:"verb",ko:"놔두다",hint:"lea_e"},{w:"table",pos:"noun",ko:"테이블",hint:"tab_e"}]},
-{en:"Sea levels are expected to rise during the next century.",ko:"해수면은 다음 세기 동안 상승할 것으로 예상됩니다.",words:[{w:"expected",pos:"verb",ko:"예상된",hint:"exp____d"},{w:"century",pos:"noun",ko:"세기",hint:"cen___y"}]},
-{en:"Please close the door behind you when you leave the room.",ko:"방을 나갈 때는 문을 닫아주세요.",words:[{w:"behind",pos:"prep",ko:"뒤에",hint:"beh__d"},{w:"leave",pos:"verb",ko:"나가다",hint:"lea_e"}]},
-{en:"The department works closely with business communities.",ko:"이 부서는 비즈니스 커뮤니티와 긴밀히 협력합니다.",words:[{w:"department",pos:"noun",ko:"부서",hint:"dep______nt"},{w:"communities",pos:"noun",ko:"커뮤니티",hint:"com_______ies"}]},
-{en:"There is an accounting assignment for finance students.",ko:"재무학과 학생을 위한 회계 과제가 있습니다.",words:[{w:"accounting",pos:"noun",ko:"회계",hint:"acc_____ing"},{w:"assignment",pos:"noun",ko:"과제",hint:"ass_____nt"}]},
-{en:"Relying on natural ability will not get you far in science.",ko:"타고난 능력에 의지한다고 해서 과학 분야에서 멀리 나아갈 수는 없습니다.",words:[{w:"relying",pos:"verb",ko:"의지하는",hint:"rel____g"},{w:"ability",pos:"noun",ko:"능력",hint:"abi___ty"}]},
-{en:"We should never underestimate the power of creative design.",ko:"우리는 창의적인 디자인의 힘을 결코 과소평가해서는 안 됩니다.",words:[{w:"underestimate",pos:"verb",ko:"과소평가하다",hint:"und__________te"},{w:"creative",pos:"adj",ko:"창의적인",hint:"cre____ve"}]},
-{en:"Linguistics is the scientific study and analysis of language.",ko:"언어학은 언어를 과학적으로 연구하고 분석하는 학문입니다.",words:[{w:"linguistics",pos:"noun",ko:"언어학",hint:"lin_______cs"},{w:"analysis",pos:"noun",ko:"분석",hint:"ana____s"}]},
-{en:"Marine environments have been destroyed through pollution and unsustainable development.",ko:"해양 환경은 오염과 지속 불가능한 개발로 인해 파괴되고 있습니다.",words:[{w:"environments",pos:"noun",ko:"환경",hint:"env_________nts"},{w:"pollution",pos:"noun",ko:"오염",hint:"pol_____on"}]},
-{en:"Designers need to keep up with the social trends.",ko:"디자이너는 사회적 트렌드를 따라가야 합니다.",words:[{w:"designers",pos:"noun",ko:"디자이너",hint:"des_____rs"},{w:"trends",pos:"noun",ko:"트렌드",hint:"tre__s"}]},
-{en:"People have been dependent on using phones in their everyday lives.",ko:"사람들은 일상 생활에서 휴대폰 사용에 의존해 왔습니다.",words:[{w:"dependent",pos:"adj",ko:"의존하는",hint:"dep_____nt"},{w:"everyday",pos:"adj",ko:"일상적인",hint:"eve_____ay"}]},
-{en:"A new collection of articles has just been published.",ko:"새로운 기사 모음집이 막 출간되었습니다.",words:[{w:"collection",pos:"noun",ko:"컬렉션",hint:"col______on"},{w:"published",pos:"verb",ko:"출간된",hint:"pub_____d"}]},
-{en:"A visit to the designed museum is of great value.",ko:"디자인 박물관을 방문하는 것은 큰 가치가 있습니다.",words:[{w:"museum",pos:"noun",ko:"박물관",hint:"mus__m"},{w:"value",pos:"noun",ko:"가치",hint:"val_e"}]},
-{en:"The university provides excellent leisure facilities for students and staff.",ko:"대학은 학생과 교직원을 위한 훌륭한 여가 시설을 제공합니다.",words:[{w:"provides",pos:"verb",ko:"제공하다",hint:"pro____s"},{w:"facilities",pos:"noun",ko:"시설",hint:"fac_______ies"}]},
-{en:"Auditions for the university choir will be held next week.",ko:"대학 합창단 오디션은 다음 주에 열립니다.",words:[{w:"auditions",pos:"noun",ko:"오디션",hint:"aud_____ns"},{w:"choir",pos:"noun",ko:"합창단",hint:"cho_r"}]},
-{en:"A good abstract highlights the key points of your paper.",ko:"좋은 초록은 논문의 핵심 사항을 강조합니다.",words:[{w:"abstract",pos:"noun",ko:"초록",hint:"abs____ct"},{w:"highlights",pos:"verb",ko:"강조하다",hint:"hig______ts"}]},
-{en:"The commissioner will apportion the funds among all the authorities.",ko:"위원장이 모든 기관에 자금을 배분합니다.",words:[{w:"commissioner",pos:"noun",ko:"위원장",hint:"com_________er"},{w:"apportion",pos:"verb",ko:"배분하다",hint:"app_____on"}]},
-{en:"Please note that the seminar has now been canceled.",ko:"현재 세미나가 취소되었음을 알려드립니다.",words:[{w:"seminar",pos:"noun",ko:"세미나",hint:"sem___r"},{w:"canceled",pos:"verb",ko:"취소된",hint:"can____d"}]},
-{en:"Three separate research resources are not enough for this assessment.",ko:"이 평가에는 세 가지 개별 연구 리소스만으로는 충분하지 않습니다.",words:[{w:"separate",pos:"adj",ko:"개별적인",hint:"sep____te"},{w:"assessment",pos:"noun",ko:"평가",hint:"ass______nt"}]},
-{en:"New media journalism is an exciting area of study.",ko:"뉴미디어 저널리즘은 흥미로운 연구 분야입니다.",words:[{w:"journalism",pos:"noun",ko:"저널리즘",hint:"jou______ism"},{w:"exciting",pos:"adj",ko:"흥미로운",hint:"exc____ng"}]},
-{en:"Rising sea temperatures are a sign of climate change.",ko:"해수 온도 상승은 기후 변화의 신호입니다.",words:[{w:"temperatures",pos:"noun",ko:"온도",hint:"tem_________es"},{w:"climate",pos:"noun",ko:"기후",hint:"cli___e"}]},
-{en:"The economic predictions turned out to be incorrect.",ko:"경제 예측은 틀린 것으로 판명되었습니다.",words:[{w:"predictions",pos:"noun",ko:"예측",hint:"pre_______ons"},{w:"incorrect",pos:"adj",ko:"틀린",hint:"inc_____ct"}]},
-{en:"Students should take the training course to use the gym.",ko:"학생들은 체육관을 이용하려면 교육 과정을 수강해야 합니다.",words:[{w:"training",pos:"noun",ko:"훈련",hint:"tra____ng"}]},
-{en:"Summer school programs allow some students to accelerate their studies.",ko:"일부 학생들은 여름방학 프로그램을 통해 학습 속도를 높일 수 있습니다.",words:[{w:"programs",pos:"noun",ko:"프로그램",hint:"pro____ms"},{w:"accelerate",pos:"verb",ko:"가속화하다",hint:"acc______te"}]},
-{en:"The momentum is defined as the combination of mass and velocity.",ko:"운동량은 질량과 속도의 조합으로 정의됩니다.",words:[{w:"momentum",pos:"noun",ko:"운동량",hint:"mom____um"},{w:"velocity",pos:"noun",ko:"속도",hint:"vel____ty"}]},
-{en:"More research is needed before any definitive conclusion can be drawn.",ko:"확실한 결론을 내리기 위해서는 더 많은 연구가 필요합니다.",words:[{w:"definitive",pos:"adj",ko:"확정적인",hint:"def______ve"},{w:"conclusion",pos:"noun",ko:"결론",hint:"con_____on"}]},
-{en:"The north campus car park could be closed on Sunday.",ko:"북쪽 캠퍼스 주차장은 일요일에 폐쇄될 수 있습니다.",words:[{w:"campus",pos:"noun",ko:"캠퍼스",hint:"cam__s"}]},
-{en:"Participating in the class is the center of the course.",ko:"수업에 참여하는 것이 이 과정의 핵심입니다.",words:[{w:"participating",pos:"verb",ko:"참여하는",hint:"par__________ng"},{w:"center",pos:"noun",ko:"핵심",hint:"cen__r"}]},
-{en:"The study center in the library has all the latest technologies.",ko:"도서관의 학습 센터에는 모든 최신 기술이 갖추어져 있습니다.",words:[{w:"latest",pos:"adj",ko:"최신의",hint:"lat__t"},{w:"technologies",pos:"noun",ko:"기술들",hint:"tec________ies"}]},
-{en:"At university students can make friends for life.",ko:"대학생은 평생 친구를 사귈 수 있습니다.",words:[{w:"university",pos:"noun",ko:"대학교",hint:"uni______ity"}]},
-{en:"Much of this research is carried out in the laboratory.",ko:"이 연구의 대부분은 실험실에서 수행됩니다.",words:[{w:"research",pos:"noun",ko:"연구",hint:"res____ch"},{w:"laboratory",pos:"noun",ko:"실험실",hint:"lab_______ry"}]},
-{en:"Technology is changing the way that media is used and studied.",ko:"기술은 미디어를 사용하고 연구하는 방식을 바꾸고 있습니다.",words:[{w:"technology",pos:"noun",ko:"기술",hint:"tec_____gy"},{w:"media",pos:"noun",ko:"미디어",hint:"med_a"}]},
-{en:"You will be tested by continuous assessments and examinations.",ko:"지속적인 평가와 검사를 통해 테스트를 받게 됩니다.",words:[{w:"continuous",pos:"adj",ko:"지속적인",hint:"con______us"},{w:"assessments",pos:"noun",ko:"평가",hint:"ass________nts"}]},
-{en:"The college operates a system of continuous assessments.",ko:"본교는 지속적인 평가 시스템을 운영하고 있습니다.",words:[{w:"operates",pos:"verb",ko:"운영하다",hint:"ope____es"},{w:"continuous",pos:"adj",ko:"지속적인",hint:"con______us"}]},
-{en:"Scientists have founded all parts of society today.",ko:"과학자들은 오늘날 사회의 모든 분야를 창시했습니다.",words:[{w:"scientists",pos:"noun",ko:"과학자들",hint:"sci______sts"},{w:"society",pos:"noun",ko:"사회",hint:"soc___ty"}]},
-{en:"Novelists write about the best things that they know about.",ko:"소설가들은 자신이 알고 있는 최고의 것들에 대해 글을 씁니다.",words:[{w:"novelists",pos:"noun",ko:"소설가들",hint:"nov_____sts"}]},
-{en:"The lecture today will cover all the main reasons for global warming.",ko:"오늘 강연에서는 지구 온난화의 주요 원인을 모두 다룰 예정입니다.",words:[{w:"reasons",pos:"noun",ko:"이유",hint:"rea___s"},{w:"warming",pos:"noun",ko:"온난화",hint:"war____g"}]},
-{en:"The rising temperature is changing the wildlife population.",ko:"기온 상승으로 인해 야생 동물 개체수가 변화하고 있습니다.",words:[{w:"temperature",pos:"noun",ko:"온도",hint:"tem_______re"},{w:"population",pos:"noun",ko:"개체수",hint:"pop______on"}]},
-{en:"The director of the gallery was grateful for the anonymous donation.",ko:"갤러리 관장은 익명으로 기부해 주신 것에 감사했습니다.",words:[{w:"grateful",pos:"adj",ko:"감사하는",hint:"gra____l"},{w:"anonymous",pos:"adj",ko:"익명의",hint:"ano_____us"}]},
-{en:"You should have awareness of how the business operates globally.",ko:"비즈니스가 전 세계적으로 어떻게 운영되는지 알고 있어야 합니다.",words:[{w:"awareness",pos:"noun",ko:"인식",hint:"awa_____ss"},{w:"globally",pos:"adv",ko:"전세계적으로",hint:"glo____ly"}]},
-{en:"Art is an expression of creative skills and imagination.",ko:"예술은 창의력과 상상력의 표현입니다.",words:[{w:"expression",pos:"noun",ko:"표현",hint:"exp_____on"},{w:"imagination",pos:"noun",ko:"상상력",hint:"ima_______on"}]},
-{en:"We have sophisticated ways of studying the brain in action.",ko:"우리는 두뇌의 활동을 연구하는 정교한 방법을 가지고 있습니다.",words:[{w:"sophisticated",pos:"adj",ko:"정교한",hint:"sop__________ed"},{w:"studying",pos:"verb",ko:"연구하는",hint:"stu____ng"}]},
-{en:"The article considers the leisure habits of teenagers in rural areas.",ko:"이 글은 농촌 지역 청소년들의 여가 습관을 고찰합니다.",words:[{w:"leisure",pos:"noun",ko:"여가",hint:"lei___e"},{w:"teenagers",pos:"noun",ko:"청소년들",hint:"tee______rs"}]},
-{en:"We learned through observations and the analysis of human behaviors.",ko:"우리는 관찰과 인간 행동 분석을 통해 배웠습니다.",words:[{w:"observations",pos:"noun",ko:"관찰",hint:"obs_________ons"},{w:"behaviors",pos:"noun",ko:"행동",hint:"beh_____rs"}]},
-{en:"The subject was complex and difficult to explain.",ko:"이 주제는 복잡하고 설명하기 어려웠습니다.",words:[{w:"subject",pos:"noun",ko:"주제",hint:"sub___t"},{w:"complex",pos:"adj",ko:"복잡한",hint:"com___ex"}]},
-{en:"Our aim is to reduce the risks that people take.",ko:"우리의 목표는 사람들이 감수하는 위험을 줄이는 것입니다.",words:[{w:"reduce",pos:"verb",ko:"줄이다",hint:"red__e"},{w:"risks",pos:"noun",ko:"위험",hint:"ris_s"}]},
-{en:"Please confirm that you have received the textbook.",ko:"교재를 받았는지 확인해 주세요.",words:[{w:"confirm",pos:"verb",ko:"확인하다",hint:"con____m"},{w:"textbook",pos:"noun",ko:"교재",hint:"tex_____k"}]},
-{en:"All answers must be thoroughly researched and supported by relevant theories.",ko:"모든 답안은 관련 이론을 철저히 조사하고 이를 뒷받침해야 합니다.",words:[{w:"thoroughly",pos:"adv",ko:"철저히",hint:"tho______ly"},{w:"relevant",pos:"adj",ko:"관련 있는",hint:"rel____nt"}]},
-{en:"Accountancy students have to hand in their dissertations this week.",ko:"회계학과 학생들은 이번 주에 논문을 제출해야 합니다.",words:[{w:"accountancy",pos:"noun",ko:"회계학",hint:"acc______cy"},{w:"dissertations",pos:"noun",ko:"논문",hint:"dis_________ns"}]},
-{en:"His analysis study appears to be based on the false premise.",ko:"그의 분석 연구는 잘못된 전제를 바탕으로 한 것으로 보입니다.",words:[{w:"analysis",pos:"noun",ko:"분석",hint:"ana____s"},{w:"premise",pos:"noun",ko:"전제",hint:"pre___e"}]},
-{en:"Visual aid can be really helpful when you are revising.",ko:"수정 작업을 할 때 시각적 자료가 정말 도움이 될 수 있습니다.",words:[{w:"visual",pos:"adj",ko:"시각적인",hint:"vis__l"},{w:"revising",pos:"verb",ko:"수정하는",hint:"rev____ng"}]},
-{en:"We encourage students to complete their applications before the deadline.",ko:"학생들이 마감일 전에 지원서를 완료할 것을 권장합니다.",words:[{w:"encourage",pos:"verb",ko:"권장하다",hint:"enc_____ge"},{w:"applications",pos:"noun",ko:"지원서",hint:"app________ons"}]},
-{en:"Graduates from this course typically pursue careers in financial sector.",ko:"이 과정의 졸업생은 일반적으로 금융 부문에서 경력을 쌓습니다.",words:[{w:"graduates",pos:"noun",ko:"졸업생들",hint:"gra_____tes"},{w:"pursue",pos:"verb",ko:"추구하다",hint:"pur__e"}]},
-{en:"It is a debate about the value of knowledge.",ko:"지식의 가치에 대한 논쟁입니다.",words:[{w:"debate",pos:"noun",ko:"논쟁",hint:"deb__e"},{w:"knowledge",pos:"noun",ko:"지식",hint:"kno_____ge"}]},
-{en:"Strangely, people are simultaneously impressed by and skeptical about statistics.",ko:"이상하게도 사람들은 통계에 대해 깊은 인상을 받으면서도 동시에 회의적인 반응을 보입니다.",words:[{w:"simultaneously",pos:"adv",ko:"동시에",hint:"sim__________ly"},{w:"skeptical",pos:"adj",ko:"회의적인",hint:"ske_____al"}]},
-{en:"The collapse of the housing market has caused recessions.",ko:"주택시장의 붕괴는 경기침체를 가져왔다.",words:[{w:"collapse",pos:"noun",ko:"붕괴",hint:"col____se"},{w:"recessions",pos:"noun",ko:"경기침체",hint:"rec______ons"}]},
-{en:"Calculators allow us to add numbers without making mistakes.",ko:"계산기를 사용하면 실수 없이 숫자를 더할 수 있습니다.",words:[{w:"calculators",pos:"noun",ko:"계산기",hint:"cal________rs"},{w:"mistakes",pos:"noun",ko:"실수",hint:"mis____es"}]},
-{en:"Most of the lectures begin punctually, so do not be late.",ko:"대부분의 강의는 정시에 시작되므로 지각하지 마세요.",words:[{w:"punctually",pos:"adv",ko:"정시에",hint:"pun_______ly"},{w:"lectures",pos:"noun",ko:"강의",hint:"lec____es"}]},
-{en:"The student union hosts a variety of social events.",ko:"학생회에서는 다양한 사교 행사를 주최합니다.",words:[{w:"hosts",pos:"verb",ko:"주최하다",hint:"hos_s"},{w:"variety",pos:"noun",ko:"다양함",hint:"var____ty"}]},
-{en:"Social psychology is concerned with the understanding of human behaviors.",ko:"사회 심리학은 인간 행동에 대한 이해와 관련이 있습니다.",words:[{w:"psychology",pos:"noun",ko:"심리학",hint:"psy_______gy"},{w:"understanding",pos:"noun",ko:"이해",hint:"und_________ing"}]},
-{en:"Gravity is the force that attracts two bodies toward one another.",ko:"중력은 두 물체를 서로 끌어당기는 힘입니다.",words:[{w:"gravity",pos:"noun",ko:"중력",hint:"gra____y"},{w:"attracts",pos:"verb",ko:"끌어당기다",hint:"att____ts"}]},
-{en:"The reception staff can give advice on renting private accommodation.",ko:"리셉션 직원은 개인 숙소 임대에 관한 조언을 제공해 드립니다.",words:[{w:"reception",pos:"noun",ko:"접수처",hint:"rec_____on"},{w:"accommodation",pos:"noun",ko:"숙박 시설",hint:"acc_________on"}]},
-{en:"Artists need to make their works both original and accessible.",ko:"예술가는 자신의 작품을 독창적이고 쉽게 접근할 수 있도록 만들어야 합니다.",words:[{w:"original",pos:"adj",ko:"독창적인",hint:"ori____al"},{w:"accessible",pos:"adj",ko:"접근하기 쉬운",hint:"acc______ble"}]},
-{en:"The archeologist's new discoveries stand out in the previously overlooked foundations.",ko:"고고학자의 새로운 발견은 이전에 간과되었던 유적에서 두드러집니다.",words:[{w:"archeologist",pos:"noun",ko:"고고학자",hint:"arc_________st"},{w:"overlooked",pos:"verb",ko:"간과된",hint:"ove_______d"}]},
-{en:"Please return the textbooks to the correct bookshelves in the library.",ko:"교과서를 도서관의 올바른 책꽂이에 반납해 주세요.",words:[{w:"textbooks",pos:"noun",ko:"교과서",hint:"tex_____ks"},{w:"bookshelves",pos:"noun",ko:"책꽂이",hint:"boo_______ves"}]},
-{en:"The contract will be signed by the owner of the company.",ko:"계약은 회사 소유주가 서명합니다.",words:[{w:"contract",pos:"noun",ko:"계약",hint:"con____ct"},{w:"owner",pos:"noun",ko:"소유주",hint:"own_r"}]},
-{en:"The glittering of the lake surface camouflages the fish.",ko:"호수 표면의 반짝이는 빛이 물고기를 위장합니다.",words:[{w:"glittering",pos:"verb",ko:"반짝이는",hint:"gli_____ng"},{w:"camouflages",pos:"verb",ko:"위장하다",hint:"cam________es"}]},
-{en:"Having enough sleep has many positive benefits.",ko:"충분한 수면은 많은 긍정적인 이점을 가져다줍니다.",words:[{w:"enough",pos:"adj",ko:"충분한",hint:"eno__h"},{w:"positive",pos:"adj",ko:"긍정적인",hint:"pos____ve"}]},
-{en:"The lecture will cover the reason for climate change.",ko:"이번 강연에서는 기후 변화의 원인에 대해 다룰 예정입니다.",words:[{w:"lecture",pos:"noun",ko:"강의",hint:"lec___e"},{w:"climate",pos:"noun",ko:"기후",hint:"cli___e"}]},
-{en:"Assessment procedure has been changed slightly since the last year.",ko:"작년부터 평가 절차가 약간 변경되었습니다.",words:[{w:"assessment",pos:"noun",ko:"평가",hint:"ass______nt"},{w:"procedure",pos:"noun",ko:"절차",hint:"pro_____re"}]},
-{en:"The article illustrates the intricate relationship of culture and language.",ko:"이 글은 문화와 언어의 복잡한 관계를 잘 보여줍니다.",words:[{w:"illustrates",pos:"verb",ko:"보여주다",hint:"ill_______tes"},{w:"intricate",pos:"adj",ko:"복잡한",hint:"int_____te"}]},
-{en:"The field of social development includes description of social behavior.",ko:"사회 발달 분야에는 사회적 행동에 대한 설명이 포함됩니다.",words:[{w:"development",pos:"noun",ko:"발전",hint:"dev_______nt"},{w:"description",pos:"noun",ko:"설명",hint:"des_______on"}]},
-{en:"The tutor has canceled the lecture for geography students.",ko:"강사가 지리학 학생을 위한 강의를 취소했습니다.",words:[{w:"canceled",pos:"verb",ko:"취소했다",hint:"can____d"},{w:"geography",pos:"noun",ko:"지리학",hint:"geo_____hy"}]},
-{en:"All accounting students must submit their dissertations before the end of the week.",ko:"모든 회계학 학생은 이번 주가 끝나기 전에 논문을 제출해야 합니다.",words:[{w:"accounting",pos:"noun",ko:"회계학",hint:"acc_____ing"},{w:"submit",pos:"verb",ko:"제출하다",hint:"sub__t"}]},
-{en:"You need to make sure that all your essays are handed in on time.",ko:"모든 에세이를 제시간에 제출해야 합니다.",words:[{w:"essays",pos:"noun",ko:"에세이",hint:"ess__s"},{w:"handed",pos:"verb",ko:"제출된",hint:"han__d"}]},
-{en:"We should always use recycled plastic and glass bottles.",ko:"항상 재활용 플라스틱과 유리병을 사용해야 합니다.",words:[{w:"recycled",pos:"adj",ko:"재활용된",hint:"rec____d"},{w:"bottles",pos:"noun",ko:"병",hint:"bot___s"}]},
-{en:"Plastic pollution is very dangerous for ocean lives.",ko:"플라스틱 오염은 해양 생물에게 매우 위험합니다.",words:[{w:"pollution",pos:"noun",ko:"오염",hint:"pol_____on"},{w:"dangerous",pos:"adj",ko:"위험한",hint:"dan_____us"}]},
-{en:"The content is to define the combination of math and philosophy.",ko:"내용은 수학과 철학의 결합을 정의하는 것입니다.",words:[{w:"define",pos:"verb",ko:"정의하다",hint:"def__e"},{w:"philosophy",pos:"noun",ko:"철학",hint:"phi_______hy"}]},
-{en:"Students often conduct research to enhance their knowledge.",ko:"학생들은 종종 지식을 향상시키기 위해 연구를 수행합니다.",words:[{w:"conduct",pos:"verb",ko:"수행하다",hint:"con___t"},{w:"enhance",pos:"verb",ko:"향상시키다",hint:"enh___e"}]},
-{en:"Application forms should be submitted in one week.",ko:"신청서는 1주일 이내에 제출해야 합니다.",words:[{w:"application",pos:"noun",ko:"신청서",hint:"app_______on"},{w:"submitted",pos:"verb",ko:"제출된",hint:"sub_____d"}]},
-{en:"Farming is affected by changes in seasonal patterns.",ko:"농사는 계절 패턴의 변화에 영향을 받습니다.",words:[{w:"affected",pos:"verb",ko:"영향을 받은",hint:"aff____d"},{w:"seasonal",pos:"adj",ko:"계절적인",hint:"sea____al"}]},
-{en:"The rise in sea level indicates climate change.",ko:"해수면 상승은 기후 변화를 나타냅니다.",words:[{w:"indicates",pos:"verb",ko:"나타내다",hint:"ind_____es"},{w:"climate",pos:"noun",ko:"기후",hint:"cli___e"}]},
-{en:"The university library cafe is on the third floor.",ko:"대학 도서관 카페는 3층에 있습니다.",words:[{w:"library",pos:"noun",ko:"도서관",hint:"lib___ry"},{w:"floor",pos:"noun",ko:"층",hint:"flo_r"}]},
-{en:"Some students were absent due to the train delay.",ko:"일부 학생들은 열차 지연으로 인해 결석했습니다.",words:[{w:"absent",pos:"adj",ko:"결석한",hint:"abs__t"},{w:"delay",pos:"noun",ko:"지연",hint:"del_y"}]},
-{en:"The class is canceled because the professor is sick.",ko:"교수님이 아파서 수업이 취소되었습니다.",words:[{w:"canceled",pos:"verb",ko:"취소된",hint:"can____d"},{w:"professor",pos:"noun",ko:"교수",hint:"pro_____or"}]},
-{en:"Maths uses numbers and shapes to solve problems.",ko:"수학은 숫자와 도형을 사용하여 문제를 해결합니다.",words:[{w:"numbers",pos:"noun",ko:"숫자",hint:"num___rs"},{w:"shapes",pos:"noun",ko:"도형",hint:"sha__s"}]},
-{en:"The employment rate has steadily increased over the last year.",ko:"지난 한 해 동안 고용률은 꾸준히 증가했습니다.",words:[{w:"employment",pos:"noun",ko:"고용",hint:"emp______nt"},{w:"steadily",pos:"adv",ko:"꾸준히",hint:"ste_____ly"}]},
-{en:"The professor said biology is not the only subject on the exam.",ko:"교수는 생물학만이 시험의 유일한 과목이 아니라고 말했습니다.",words:[{w:"professor",pos:"noun",ko:"교수",hint:"pro_____or"},{w:"biology",pos:"noun",ko:"생물학",hint:"bio___gy"}]},
-{en:"Participants recorded their sleep hours in the journals.",ko:"참가자들은 자신의 수면 시간을 일지에 기록했습니다.",words:[{w:"Participants",pos:"noun",ko:"참가자들",hint:"Par________s"},{w:"journals",pos:"noun",ko:"일지",hint:"jou____ls"}]},
-{en:"Effective communication is the key to becoming a successful manager.",ko:"효과적인 커뮤니케이션은 성공적인 관리자가 되기 위한 핵심 요소입니다.",words:[{w:"Effective",pos:"adj",ko:"효과적인",hint:"Eff_____ve"},{w:"communication",pos:"noun",ko:"커뮤니케이션",hint:"com_________on"}]},
-{en:"Students need to register to gain access to library printers.",ko:"학생은 도서관 프린터를 사용하려면 등록해야 합니다.",words:[{w:"register",pos:"verb",ko:"등록하다",hint:"reg____er"},{w:"printers",pos:"noun",ko:"프린터",hint:"pri____rs"}]},
-{en:"There will be a quiz class next week.",ko:"다음 주에 퀴즈 수업이 있을 예정입니다.",words:[{w:"quiz",pos:"noun",ko:"퀴즈",hint:"qu_z"},{w:"class",pos:"noun",ko:"수업",hint:"cla_s"}]},
-{en:"You can make an appointment to meet the librarian.",ko:"사서 선생님을 만나기 위해 예약을 할 수 있습니다.",words:[{w:"appointment",pos:"noun",ko:"예약",hint:"app________nt"},{w:"librarian",pos:"noun",ko:"사서",hint:"lib_____an"}]},
-{en:"The coffee machine located on the third floor is not working today.",ko:"3층에 위치한 커피 머신이 오늘 작동하지 않습니다.",words:[{w:"machine",pos:"noun",ko:"기계",hint:"mac___ne"},{w:"located",pos:"verb",ko:"위치한",hint:"loc___ed"}]},
-{en:"Teaching assistants play a vital role in the learning process.",ko:"조교는 학습 과정에서 중요한 역할을 합니다.",words:[{w:"assistants",pos:"noun",ko:"조교",hint:"ass______ts"},{w:"vital",pos:"adj",ko:"중요한",hint:"vi__l"}]},
-{en:"Before preparing food, please make sure to wash your hands.",ko:"음식을 준비하기 전에는 반드시 손을 씻어주세요.",words:[{w:"preparing",pos:"verb",ko:"준비하는",hint:"pre_____ng"},{w:"wash",pos:"verb",ko:"씻다",hint:"wa_h"}]},
-{en:"We were talking about ways of committing crimes.",ko:"우리는 범죄를 저지르는 방법에 대해 이야기하고 있었습니다.",words:[{w:"committing",pos:"verb",ko:"저지르는",hint:"com______ng"},{w:"crimes",pos:"noun",ko:"범죄",hint:"cri__s"}]},
-{en:"Please confirm your essay topic before the deadline.",ko:"마감일 전에 에세이 주제를 확인하시기 바랍니다.",words:[{w:"confirm",pos:"verb",ko:"확인하다",hint:"con____rm"},{w:"deadline",pos:"noun",ko:"마감일",hint:"dea____ne"}]},
-{en:"We have been unsuccessful in finding a new manager.",ko:"새 매니저를 찾는 데 실패했습니다.",words:[{w:"unsuccessful",pos:"adj",ko:"실패한",hint:"uns________ul"},{w:"manager",pos:"noun",ko:"매니저",hint:"man___er"}]},
-{en:"The exam will not be posted until further notice.",ko:"시험은 추후 공지가 있을 때까지 게시되지 않습니다.",words:[{w:"posted",pos:"verb",ko:"게시된",hint:"pos__ed"},{w:"notice",pos:"noun",ko:"공지",hint:"not__ce"}]},
-{en:"The lecture is about the reasons for the financial crisis.",ko:"강의는 금융 위기의 원인에 관한 것입니다.",words:[{w:"financial",pos:"adj",ko:"금융의",hint:"fin_____al"},{w:"crisis",pos:"noun",ko:"위기",hint:"cri__s"}]},
-{en:"Important details from the argument are missing in the summary.",ko:"주장의 중요한 세부 사항이 요약에 누락되어 있습니다.",words:[{w:"argument",pos:"noun",ko:"주장",hint:"arg_____nt"},{w:"summary",pos:"noun",ko:"요약",hint:"sum___ry"}]},
-{en:"Sugar is a compound including carbon, oxygen, and hydrogen atoms.",ko:"설탕은 탄소, 산소, 수소 원자로 이루어진 화합물이다.",words:[{w:"compound",pos:"noun",ko:"화합물",hint:"com____nd"},{w:"hydrogen",pos:"noun",ko:"수소",hint:"hyd____en"}]},
-{en:"University staff provide advice on renting and accommodation.",ko:"대학 직원이 임대 및 숙박 시설에 대한 조언을 제공합니다.",words:[{w:"advice",pos:"noun",ko:"조언",hint:"adv__ce"},{w:"accommodation",pos:"noun",ko:"숙박 시설",hint:"acc_________on"}]},
-{en:"Many university lectures can now be viewed on the internet.",ko:"이제 많은 대학 강의를 인터넷에서 볼 수 있습니다.",words:[{w:"lectures",pos:"noun",ko:"강의",hint:"lec____es"},{w:"internet",pos:"noun",ko:"인터넷",hint:"int____et"}]},
-{en:"The university will cease the colossal renovation of the faint empty theater.",ko:"대학은 희미하고 텅 빈 극장에 대한 대대적인 개축을 중단할 예정이다.",words:[{w:"colossal",pos:"adj",ko:"거대한",hint:"col____al"},{w:"renovation",pos:"noun",ko:"개보수",hint:"ren______on"}]},
-{en:"A few journalism students write for the school newspaper.",ko:"몇몇 저널리즘과 학생들은 학교 신문에 글을 기고합니다.",words:[{w:"journalism",pos:"noun",ko:"저널리즘",hint:"jou______ism"},{w:"newspaper",pos:"noun",ko:"신문",hint:"new_____er"}]},
-{en:"Meteorology is the detailed study of the Earth's atmosphere.",ko:"기상학은 지구 대기를 자세히 연구하는 학문입니다.",words:[{w:"Meteorology",pos:"noun",ko:"기상학",hint:"Met________gy"},{w:"atmosphere",pos:"noun",ko:"대기",hint:"atm______re"}]},
-{en:"Safety is the most important in the biology lab.",ko:"생물학 연구실에서는 안전이 가장 중요합니다.",words:[{w:"Safety",pos:"noun",ko:"안전",hint:"Saf__y"},{w:"biology",pos:"noun",ko:"생물학",hint:"bio___gy"}]},
-{en:"We were discussing the methods used by criminals to commit crimes.",ko:"우리는 범죄자들이 범죄를 저지르는 데 사용하는 방법에 대해 논의하고 있었습니다.",words:[{w:"discussing",pos:"verb",ko:"논의하는",hint:"dis_____ing"},{w:"criminals",pos:"noun",ko:"범죄자들",hint:"cri_____ls"}]}
-];
-
-// ============================================================
+{en:"The celebrated theory is still the source of great controversy.",ko:"이 유명한 이론은 여전히 큰 논란의 대상이 되고 있습니다.",words:[]},
+{en:"A good architectural structure should be useful, durable and beautiful.",ko:"좋은 건축 구조는 유용하고 내구성이 뛰어나며 아름다워야 합니다.",words:[]},
+{en:"A group meeting will be held tomorrow in the library conference room.",ko:"내일 도서관 회의실에서 그룹 회의가 열립니다.",words:[]},
+{en:"Educational level is found to be related to social and economic background.",ko:"교육 수준은 사회적, 경제적 배경과 관련이 있는 것으로 나타났습니다.",words:[]},
+{en:"Tutorials are scheduled in the final week of the term.",ko:"튜토리얼은 학기 마지막 주에 예정되어 있습니다.",words:[]},
+{en:"You can make an appointment to meet the librarian.",ko:"사서 선생님을 만나기 위해 예약을 할 수 있습니다.",words:[]},
+{en:"All dissertations must be accompanied by a submission form.",ko:"모든 논문에는 제출 양식이 첨부되어야 합니다.",words:[]},
+{en:"All of the assignments must be submitted in person to the faculty office.",ko:"모든 과제는 교직원 사무실에 직접 제출해야 합니다.",words:[]},
+{en:"Economic development needs to be supported by the government.",ko:"경제 발전은 정부의 지원이 필요합니다.",words:[]},
+{en:"The toughest part of postgraduate education is funding.",ko:"대학원 교육에서 가장 어려운 부분은 자금 조달입니다.",words:[]},
+{en:"Our view is that educational reforms have been inadequately implemented.",ko:"우리의 견해는 교육 개혁이 부적절하게 시행되었다는 것입니다.",words:[]},
+{en:"An introduction is an essential element of presentation.",ko:"소개는 프레젠테이션의 필수 요소입니다.",words:[]},
+{en:"The assignments should be submitted to the department office before the deadlines.",ko:"과제는 마감일 전에 부서 사무실에 제출해야 합니다.",words:[]},
+{en:"Before attending classes, you must register online or by post.",ko:"수업에 참석하기 전에 온라인 또는 우편으로 등록해야 합니다.",words:[]},
+{en:"Certain scientific principles must be learned verbally or by logical deduction.",ko:"특정 과학 원리는 구두로 또는 논리적 추론을 통해 학습해야 합니다.",words:[]},
+{en:"Daily practice can build confidence and improve skills.",ko:"매일 연습하면 자신감을 키우고 기술을 향상시킬 수 있습니다.",words:[]},
+{en:"Human beings compete with other living things for resources and space.",ko:"인간은 자원과 공간을 놓고 다른 생명체와 경쟁합니다.",words:[]},
+{en:"Good research delivers practical benefits for real people.",ko:"좋은 연구는 실제 사람들에게 실질적인 혜택을 제공합니다.",words:[]},
+{en:"He landed a job in a very prestigious law firm.",ko:"그는 매우 명망 있는 로펌에 취직했습니다.",words:[]},
+{en:"The lecture is about the reasons for the financial crisis.",ko:"강의는 금융 위기의 원인에 관한 것입니다.",words:[]},
+{en:"I thought it was through the small meeting room.",ko:"작은 회의실을 통해서인 줄 알았습니다.",words:[]},
+{en:"If finance is a cause of concern, scholarships may be available.",ko:"재정적인 문제가 우려되는 경우 장학금을 받을 수 있습니다.",words:[]},
+{en:"If you need additional help, visit the student resource center.",ko:"추가 도움이 필요하면 학생 리소스 센터를 방문하세요.",words:[]},
+{en:"Important details from the argument are missing in the summary.",ko:"주장의 중요한 세부 사항이 요약에 누락되어 있습니다.",words:[]},
+{en:"It may not be possible to solve the problem easily.",ko:"문제를 쉽게 해결하지 못할 수도 있습니다.",words:[]},
+{en:"Library reference desks hold a lot of materials on academic history.",ko:"도서관 자료실에는 학술 역사에 관한 많은 자료가 있습니다.",words:[]},
+{en:"Listening is the key skill needed to succeed in this course.",ko:"경청은 이 과정에서 성공하는 데 필요한 핵심 기술입니다.",words:[]},
+{en:"Medical researchers have focused on causes of diseases and treatments.",ko:"의학 연구자들은 질병의 원인과 치료법에 집중해 왔습니다.",words:[]},
+{en:"Most of these students have not considered this issue before.",ko:"이 학생들 대부분은 이 문제에 대해 생각해 본 적이 없습니다.",words:[]},
+{en:"Mutually exclusive events can be described as either complementary or opposite.",ko:"상호 배타적인 이벤트는 상호 보완적이거나 반대되는 것으로 설명할 수 있습니다.",words:[]},
+{en:"Organizational failure is considered from various perspectives in academic literature.",ko:"조직의 실패는 학술 문헌에서 다양한 관점에서 고려됩니다.",words:[]},
+{en:"Plants are the living things that can grow on land or in water.",ko:"식물은 육지나 물에서 자랄 수 있는 생명체입니다.",words:[]},
+{en:"Please make sure you have correctly cited all the necessary materials.",ko:"필요한 모든 자료를 올바르게 인용했는지 확인하세요.",words:[]},
+{en:"Public perception about biotechnology is crucial for developing scientific consensus.",ko:"생명공학에 대한 대중의 인식은 과학적 공감대를 형성하는 데 매우 중요합니다.",words:[]},
+{en:"Remember, the prestigious election of stewardship has strict eligibility criteria.",ko:"기억하세요, 권위 있는 지도자 선출은 엄격한 자격 기준이 있습니다.",words:[]},
+{en:"Resources and materials are on hold at the library reference desk.",ko:"리소스와 자료는 도서관 참고 데스크에 보관되어 있습니다.",words:[]},
+{en:"Many departments have their own special book collections.",ko:"많은 부서에서 자체적으로 특별한 도서 컬렉션을 보유하고 있습니다.",words:[]},
+{en:"Some economists argue that the entire financial system is fatally flawed.",ko:"일부 경제학자들은 금융 시스템 전체에 치명적인 결함이 있다고 주장합니다.",words:[]},
+{en:"Students have the options to live in college residences or apartments.",ko:"학생들은 대학 기숙사 또는 아파트에서 거주할 수 있습니다.",words:[]},
+{en:"Students who are successful have good strategies for learning.",ko:"성공한 학생은 좋은 학습 전략을 가지고 있습니다.",words:[]},
+{en:"The application processes may take longer than expected.",ko:"신청 절차가 예상보다 오래 걸릴 수 있습니다.",words:[]},
+{en:"The archeologists were astonished by the previously overlooked foundations.",ko:"고고학자들은 이전에는 간과했던 기초를 발견하고 놀라움을 금치 못했습니다.",words:[]},
+{en:"The cafeteria features soup, salads, sandwiches, chicken and fish.",ko:"카페테리아에서는 수프, 샐러드, 샌드위치, 치킨, 생선 요리를 맛볼 수 있습니다.",words:[]},
+{en:"The chemistry building is located near the entrance to the campus.",ko:"화학 건물은 캠퍼스 입구 근처에 있습니다.",words:[]},
+{en:"Rising inflation may indicate an increase in the demand for consumer products.",ko:"인플레이션 상승은 소비재에 대한 수요 증가를 나타낼 수 있습니다.",words:[]},
+{en:"The faculty staff are very approachable, friendly and extremely helpful.",ko:"교수진은 매우 친근하고 친절하며 매우 도움이 됩니다.",words:[]},
+{en:"The history of the university is a long and interesting one.",ko:"대학의 역사는 길고 흥미롭습니다.",words:[]},
+{en:"The island is located at the south end of the bay.",ko:"이 섬은 만의 남쪽 끝에 위치해 있습니다.",words:[]},
+{en:"The massive accumulation of data was converted into a communicable argument.",ko:"방대한 데이터의 축적은 소통 가능한 논쟁으로 전환되었습니다.",words:[]},
+{en:"The most popular courses still have a few places left.",ko:"가장 인기 있는 코스는 아직 자리가 몇 개 남아있습니다.",words:[]},
+{en:"The qualification will be assessed by using a criterion-referenced approach.",ko:"자격은 기준 참조 방식을 사용하여 평가됩니다.",words:[]},
+{en:"The results of the study underscored the importance of early detection.",ko:"연구 결과는 조기 발견의 중요성을 강조했습니다.",words:[]},
+{en:"Safety glasses should be worn while doing experiments in the lab.",ko:"실험실에서 실험을 할 때는 보안경을 착용해야 합니다.",words:[]},
+{en:"There are some doubts about whether these events actually occurred.",ko:"이러한 이벤트가 실제로 발생했는지에 대한 의구심이 있습니다.",words:[]},
+{en:"There is a clear need for further research in this field.",ko:"이 분야에 대한 추가 연구가 필요한 것은 분명합니다.",words:[]},
+{en:"There is clearly a need for further research in this field.",ko:"이 분야에 대한 추가 연구가 필요한 것은 분명합니다.",words:[]},
+{en:"This class will look at the structure of an essay.",ko:"이 수업에서는 에세이의 구조를 살펴봅니다.",words:[]},
+{en:"Water filters on campus will discourage the unnecessary use of plastic bottles.",ko:"캠퍼스에 정수 필터를 설치하면 불필요한 플라스틱 병 사용을 줄일 수 있습니다.",words:[]},
+{en:"We have not yet achieved equality in our society.",ko:"우리 사회는 아직 평등을 이루지 못했습니다.",words:[]},
+{en:"We study science to understand and appreciate the world around us.",ko:"우리는 주변 세계를 이해하고 감사하기 위해 과학을 공부합니다.",words:[]},
+{en:"Parents\' talk to children tends to be simplified.",ko:"부모가 자녀와 대화하는 방식은 단순화되는 경향이 있습니다.",words:[]},
+{en:"You will acquire many skills during the academic studies.",ko:"학업을 진행하는 동안 많은 기술을 습득하게 됩니다.",words:[]},
+{en:"Speak to your tutor if you need further assistance.",ko:"추가 도움이 필요하면 튜터에게 문의하세요.",words:[]},
+{en:"Education and training provide important skills for the labor force.",ko:"교육과 훈련은 노동력에게 중요한 기술을 제공합니다.",words:[]},
+{en:"There have been many changes recently in the mathematics department.",ko:"최근 수학과에 많은 변화가 있었습니다.",words:[]},
+{en:"Those who are considering a career in marketing should attend the talk.",ko:"마케팅 분야로 진로를 고려하고 있다면 이 강연에 꼭 참석하세요.",words:[]},
+{en:"The university has invested in new technologies designed to support learning.",ko:"대학은 학습을 지원하기 위해 고안된 새로운 기술에 투자했습니다.",words:[]},
+{en:"A good academic paper should present a clear argument.",ko:"좋은 학술 논문은 명확한 논거를 제시해야 합니다.",words:[]},
+{en:"A good research assistant is not afraid to ask questions.",ko:"훌륭한 연구 조교는 질문을 두려워하지 않습니다.",words:[]},
+{en:"Collaboration between departments is a feature of successful companies.",ko:"부서 간 협업은 성공적인 기업의 특징입니다.",words:[]},
+{en:"Enrolling in a double major may increase your career options.",ko:"복수 전공을 등록하면 커리어 선택의 폭이 넓어질 수 있습니다.",words:[]},
+{en:"Geography is generally divided into two main branches, human and physical.",ko:"지리학은 일반적으로 인적 지리와 물리적 지리의 두 가지 주요 분야로 나뉩니다.",words:[]},
+{en:"In this language course, we focus on both fluency and accuracy.",ko:"이 언어 과정에서는 유창함과 정확성 모두에 중점을 둡니다.",words:[]},
+{en:"This course provides the opportunity to get valuable industry experience.",ko:"이 과정은 귀중한 업계 경험을 쌓을 수 있는 기회를 제공합니다.",words:[]},
+{en:"Read the safety instructions before using any equipment in the workshop.",ko:"워크샵에서 장비를 사용하기 전에 안전 지침을 읽어보세요.",words:[]},
+{en:"Essays and assignments are spread out across the academic year.",ko:"에세이와 과제는 학년 전체에 걸쳐 분산되어 있습니다.",words:[]},
+{en:"Continuing students will be sent the necessary application forms.",ko:"계속 수강하는 학생에게는 필요한 신청서가 발송됩니다.",words:[]},
+{en:"Calculators may not be used during the examination.",ko:"시험 중에는 계산기를 사용할 수 없습니다.",words:[]},
+{en:"The elective course introduces engineering students to construction practices and concepts.",ko:"이 선택 과목은 공학도에게 건설 실무와 개념을 소개합니다.",words:[]},
+{en:"Our new medical students must attend the talk about optional courses.",ko:"신입 의대생은 선택 과목에 대한 강연에 반드시 참석해야 합니다.",words:[]},
+{en:"A professor took one year off to work on her book.",ko:"한 교수는 책 작업을 위해 1년간 휴직했습니다.",words:[]},
+{en:"This problem is complex and difficult to explain.",ko:"이 문제는 복잡하고 설명하기 어렵습니다.",words:[]},
+{en:"Scientists were unsure when the early men first left Africa.",ko:"과학자들은 초기 인류가 언제 아프리카를 처음 떠났는지 확신하지 못했습니다.",words:[]},
+{en:"The printers automatically print on both sides of each page.",ko:"프린터는 각 페이지의 양면을 자동으로 인쇄합니다.",words:[]},
+{en:"There is a widely believed perception that engineering is for boys.",ko:"공학은 남자아이들이나 하는 것이라는 인식이 널리 퍼져 있습니다.",words:[]},
+{en:"Time and distance are used to calculate speed.",ko:"속도 계산에는 시간과 거리가 사용됩니다.",words:[]},
+{en:"Distance learning allows you to develop a career around your commitments.",ko:"원격 학습을 통해 약속을 중심으로 커리어를 개발할 수 있습니다.",words:[]},
+{en:"Every student has regular meetings with his or her personal tutor.",ko:"모든 학생은 개인 튜터와 정기적인 미팅을 갖습니다.",words:[]},
+{en:"Castles were designed to intimidate both local people and enemies.",ko:"성은 지역 주민과 적 모두를 위협할 수 있도록 설계되었습니다.",words:[]},
+{en:"The opening hours of the library are reduced during summer.",ko:"여름철에는 도서관 운영 시간이 단축됩니다.",words:[]},
+{en:"A laptop computer has been found in the biology lab.",ko:"생물학 실험실에서 노트북 컴퓨터가 발견되었습니다.",words:[]},
+{en:"His appointment as the Minister of Culture was seen as a demotion.",ko:"그의 문화부 장관 임명은 강등으로 여겨졌습니다.",words:[]},
+{en:"Measures must be taken to prevent the unemployment rate from increasing.",ko:"실업률 증가를 막기 위한 조치를 취해야 합니다.",words:[]},
+{en:"The coffee machine located on the third floor is not working today.",ko:"3층에 위치한 커피 머신이 오늘 작동하지 않습니다.",words:[]},
+{en:"Request for late applications will not be accepted under any circumstances.",ko:"늦은 신청 요청은 어떠한 경우에도 허용되지 않습니다.",words:[]},
+{en:"Salt is produced from seawater or extracted from the ground.",ko:"소금은 바닷물에서 생산되거나 땅에서 추출됩니다.",words:[]},
+{en:"The news will not be received until the following week.",ko:"이 소식은 다음 주까지 수신되지 않습니다.",words:[]},
+{en:"You do not need specialist knowledge to enjoy this book.",ko:"전문 지식이 없어도 이 책을 즐길 수 있습니다.",words:[]},
+{en:"The area has a variety of underwater habitats and species.",ko:"이 지역에는 다양한 수중 서식지와 종이 있습니다.",words:[]},
+{en:"Your ideas are discussed and debated in seminars and tutorials.",ko:"여러분의 아이디어는 세미나와 튜토리얼에서 논의되고 토론됩니다.",words:[]},
+{en:"Our study program equips students with essential skills for university.",ko:"저희의 학습 프로그램은 학생들에게 대학에 필요한 필수 기술을 제공합니다.",words:[]},
+{en:"Many food crops require large amounts of water and fertilizer.",ko:"많은 식량 작물에는 많은 양의 물과 비료가 필요합니다.",words:[]},
+{en:"Classical mechanics is sometimes considered as a branch of applied mathematics.",ko:"고전 역학은 때때로 응용 수학의 한 분야로 간주되기도 합니다.",words:[]},
+{en:"Students should leave their bags on the table by the door.",ko:"학생들은 문 옆 테이블 위에 가방을 놓아두어야 합니다.",words:[]},
+{en:"Sea levels are expected to rise during the next century.",ko:"해수면은 다음 세기 동안 상승할 것으로 예상됩니다.",words:[]},
+{en:"Please close the door behind you when you leave the room.",ko:"방을 나갈 때는 문을 닫아주세요.",words:[]},
+{en:"The department works closely with business communities.",ko:"이 부서는 비즈니스 커뮤니티와 긴밀히 협력합니다.",words:[]},
+{en:"There is an accounting assignment for finance students.",ko:"재무학과 학생을 위한 회계 과제가 있습니다.",words:[]},
+{en:"Relying on natural ability will not get you far in science.",ko:"타고난 능력에 의지한다고 해서 과학 분야에서 멀리 나아갈 수는 없습니다.",words:[]},
+{en:"We should never underestimate the power of creative design.",ko:"우리는 창의적인 디자인의 힘을 결코 과소평가해서는 안 됩니다.",words:[]},
+{en:"Linguistics is the scientific study and analysis of language.",ko:"언어학은 언어를 과학적으로 연구하고 분석하는 학문입니다.",words:[]},
+{en:"Marine environments have been destroyed through pollution and unsustainable development.",ko:"해양 환경은 오염과 지속 불가능한 개발로 인해 파괴되고 있습니다.",words:[]},
+{en:"Designers need to keep up with the social trends.",ko:"디자이너는 사회적 트렌드를 따라가야 합니다.",words:[]},
+{en:"People have been dependent on using phones in their everyday lives.",ko:"사람들은 일상 생활에서 휴대폰 사용에 의존해 왔습니다.",words:[]},
+{en:"A new collection of articles has just been published.",ko:"새로운 기사 모음집이 막 출간되었습니다.",words:[]},
+{en:"A visit to the designed museum is of great value.",ko:"디자인 박물관을 방문하는 것은 큰 가치가 있습니다.",words:[]},
+{en:"The university provides excellent leisure facilities for students and staff.",ko:"대학은 학생과 교직원을 위한 훌륭한 여가 시설을 제공합니다.",words:[]},
+{en:"Auditions for the university choir will be held next week.",ko:"대학 합창단 오디션은 다음 주에 열립니다.",words:[]},
+{en:"A good abstract highlights the key points of your paper.",ko:"좋은 초록은 논문의 핵심 사항을 강조합니다.",words:[]},
+{en:"The commissioner will apportion the funds among all the authorities.",ko:"위원장이 모든 기관에 자금을 배분합니다.",words:[]},
+{en:"Please note that the seminar has now been canceled.",ko:"현재 세미나가 취소되었음을 알려드립니다.",words:[]},
+{en:"Three separate research resources are not enough for this assessment.",ko:"이 평가에는 세 가지 개별 연구 리소스만으로는 충분하지 않습니다.",words:[]},
+{en:"Please return your reference books to the library shelves.",ko:"참고 도서는 도서관 서가에 반납해 주세요.",words:[]},
+{en:"New media journalism is an exciting area of study.",ko:"뉴미디어 저널리즘은 흥미로운 연구 분야입니다.",words:[]},
+{en:"Teaching assistants play a vital role in the learning process.",ko:"조교는 학습 과정에서 중요한 역할을 합니다.",words:[]},
+{en:"Rising sea temperatures are a sign of climate change.",ko:"해수 온도 상승은 기후 변화의 신호입니다.",words:[]},
+{en:"The closing date of applications for travel scholarships is next Monday.",ko:"여행 장학금 신청 마감일은 다음 주 월요일입니다.",words:[]},
+{en:"Before preparing food, please make sure to wash your hands.",ko:"음식을 준비하기 전에는 반드시 손을 씻어주세요.",words:[]},
+{en:"The economic predictions turned out to be incorrect.",ko:"경제 예측은 틀린 것으로 판명되었습니다.",words:[]},
+{en:"Students should take the training course to use the gym.",ko:"학생들은 체육관을 이용하려면 교육 과정을 수강해야 합니다.",words:[]},
+{en:"The momentum is defined as the combination of mass and velocity.",ko:"운동량은 질량과 속도의 조합으로 정의됩니다.",words:[]},
+{en:"More research is needed before any definitive conclusion can be drawn.",ko:"확실한 결론을 내리기 위해서는 더 많은 연구가 필요합니다.",words:[]},
+{en:"The north campus car park could be closed on Sunday.",ko:"북쪽 캠퍼스 주차장은 일요일에 폐쇄될 수 있습니다.",words:[]},
+{en:"Participating in the class is the center of the course.",ko:"수업에 참여하는 것이 이 과정의 핵심입니다.",words:[]},
+{en:"The study center in the library has all the latest technologies.",ko:"도서관의 학습 센터에는 모든 최신 기술이 갖추어져 있습니다.",words:[]},
+{en:"At university students can make friends for life.",ko:"대학생은 평생 친구를 사귈 수 있습니다.",words:[]},
+{en:"Much of this research is carried out in the laboratory.",ko:"이 연구의 대부분은 실험실에서 수행됩니다.",words:[]},
+{en:"Technology is changing the way that media is used and studied.",ko:"기술은 미디어를 사용하고 연구하는 방식을 바꾸고 있습니다.",words:[]},
+{en:"You will be tested by continuous assessments and examinations.",ko:"지속적인 평가와 검사를 통해 테스트를 받게 됩니다.",words:[]},
+{en:"The college operates a system of continuous assessments.",ko:"본교는 지속적인 평가 시스템을 운영하고 있습니다.",words:[]},
+{en:"Scientists have founded all parts of society today.",ko:"과학자들은 오늘날 사회의 모든 분야를 창시했습니다.",words:[]},
+{en:"Novelists write about the best things that they know about.",ko:"소설가들은 자신이 알고 있는 최고의 것들에 대해 글을 씁니다.",words:[]},
+{en:"The lecture today will cover all the main reasons for global warming.",ko:"오늘 강연에서는 지구 온난화의 주요 원인을 모두 다룰 예정입니다.",words:[]},
+{en:"The rising temperature is changing the wildlife population.",ko:"기온 상승으로 인해 야생 동물 개체수가 변화하고 있습니다.",words:[]},
+{en:"The director of the gallery was grateful for the anonymous donation.",ko:"갤러리 관장은 익명으로 기부해 주신 것에 감사했습니다.",words:[]},
+{en:"You should have awareness of how the business operates globally.",ko:"비즈니스가 전 세계적으로 어떻게 운영되는지 알고 있어야 합니다.",words:[]},
+{en:"Art is an expression of creative skills and imagination.",ko:"예술은 창의력과 상상력의 표현입니다.",words:[]},
+{en:"We have sophisticated ways of studying the brain in action.",ko:"우리는 두뇌의 활동을 연구하는 정교한 방법을 가지고 있습니다.",words:[]},
+{en:"The article considers the leisure habits of teenagers in rural areas.",ko:"이 글은 농촌 지역 청소년들의 여가 습관을 고찰합니다.",words:[]},
+{en:"We learned through observations and the analysis of human behaviors.",ko:"우리는 관찰과 인간 행동 분석을 통해 배웠습니다.",words:[]},
+{en:"The subject was complex and difficult to explain.",ko:"이 주제는 복잡하고 설명하기 어려웠습니다.",words:[]},
+{en:"Our aim is to reduce the risks that people take.",ko:"우리의 목표는 사람들이 감수하는 위험을 줄이는 것입니다.",words:[]},
+{en:"Please confirm that you have received the textbook.",ko:"교재를 받았는지 확인해 주세요.",words:[]},
+{en:"All answers must be thoroughly researched and supported by relevant theories.",ko:"모든 답안은 관련 이론을 철저히 조사하고 이를 뒷받침해야 합니다.",words:[]},
+{en:"Accountancy students have to hand in their dissertations this week.",ko:"회계학과 학생들은 이번 주에 논문을 제출해야 합니다.",words:[]},
+{en:"His analysis study appears to be based on the false premise.",ko:"그의 분석 연구는 잘못된 전제를 바탕으로 한 것으로 보입니다.",words:[]},
+{en:"Visual aid can be really helpful when you are revising.",ko:"수정 작업을 할 때 시각적 자료가 정말 도움이 될 수 있습니다.",words:[]},
+{en:"We encourage students to complete their applications before the deadline.",ko:"학생들이 마감일 전에 지원서를 완료할 것을 권장합니다.",words:[]},
+{en:"Graduates from this course typically pursue careers in financial sector.",ko:"이 과정의 졸업생은 일반적으로 금융 부문에서 경력을 쌓습니다.",words:[]},
+{en:"It is a debate about the value of knowledge.",ko:"지식의 가치에 대한 논쟁입니다.",words:[]},
+{en:"Strangely, people are simultaneously impressed by and skeptical about statistics.",ko:"이상하게도 사람들은 통계에 대해 깊은 인상을 받으면서도 동시에 회의적인 반응을 보입니다.",words:[]},
+{en:"The collapse of the housing market has caused recessions.",ko:"주택시장의 붕괴는 경기침체를 가져왔다.",words:[]},
+{en:"Calculators allow us to add numbers without making mistakes.",ko:"계산기를 사용하면 실수 없이 숫자를 더할 수 있습니다.",words:[]},
+{en:"Most of the lectures begin punctually, so do not be late.",ko:"대부분의 강의는 정시에 시작되므로 지각하지 마세요.",words:[]},
+{en:"The student union hosts a variety of social events.",ko:"학생회에서는 다양한 사교 행사를 주최합니다.",words:[]},
+{en:"Social psychology is concerned with the understanding of human behaviors.",ko:"사회 심리학은 인간 행동에 대한 이해와 관련이 있습니다.",words:[]},
+{en:"Gravity is the force that attracts two bodies toward one another.",ko:"중력은 두 물체를 서로 끌어당기는 힘입니다.",words:[]},
+{en:"The reception staff can give advice on renting private accommodation.",ko:"리셉션 직원은 개인 숙소 임대에 관한 조언을 제공해 드립니다.",words:[]},
+{en:"Artists need to make their works both original and accessible.",ko:"예술가는 자신의 작품을 독창적이고 쉽게 접근할 수 있도록 만들어야 합니다.",words:[]},
+{en:"The archeologist\'s new discoveries stand out in the previously overlooked foundations.",ko:"고고학자의 새로운 발견은 이전에 간과되었던 유적에서 두드러집니다.",words:[]},
+{en:"Please return the textbooks to the correct bookshelves in the library.",ko:"교과서를 도서관의 올바른 책꽂이에 반납해 주세요.",words:[]},
+{en:"The contract will be signed by the owner of the company.",ko:"계약은 회사 소유주가 서명합니다.",words:[]},
+{en:"The glittering of the lake surface camouflages the fish.",ko:"호수 표면의 반짝이는 빛이 물고기를 위장합니다.",words:[]},
+{en:"Having enough sleep has many positive benefits.",ko:"충분한 수면은 많은 긍정적인 이점을 가져다줍니다.",words:[]},
+{en:"Safety is the most important in the biology lab.",ko:"생물학 연구실에서는 안전이 가장 중요합니다.",words:[]},
+{en:"The lecture will cover the reason for climate change.",ko:"이번 강연에서는 기후 변화의 원인에 대해 다룰 예정입니다.",words:[]},
+{en:"Assessment procedure has been changed slightly since the last year.",ko:"작년부터 평가 절차가 약간 변경되었습니다.",words:[]},
+{en:"The article illustrates the intricate relationship of culture and language.",ko:"이 글은 문화와 언어의 복잡한 관계를 잘 보여줍니다.",words:[]},
+{en:"The tutor has canceled the lecture for geography students.",ko:"강사가 지리학 학생을 위한 강의를 취소했습니다.",words:[]},
+{en:"All accounting students must submit their dissertations before the end of the week.",ko:"모든 회계학 학생은 이번 주가 끝나기 전에 논문을 제출해야 합니다.",words:[]},
+{en:"The next lecture will take place at a different location.",ko:"다음 강의는 다른 장소에서 열립니다.",words:[]},
+{en:"We should always use recycled plastic and glass bottles.",ko:"항상 재활용 플라스틱과 유리병을 사용해야 합니다.",words:[]},
+{en:"Plastic pollution is very dangerous for ocean lives.",ko:"플라스틱 오염은 해양 생물에게 매우 위험합니다.",words:[]},
+{en:"The content is to define the combination of math and philosophy.",ko:"내용은 수학과 철학의 결합을 정의하는 것입니다.",words:[]},
+{en:"Students often conduct research to enhance their knowledge.",ko:"학생들은 종종 지식을 향상시키기 위해 연구를 수행합니다.",words:[]},
+{en:"Farming is affected by changes in seasonal patterns.",ko:"농사는 계절 패턴의 변화에 영향을 받습니다.",words:[]},
+{en:"The rise in sea level indicates climate change.",ko:"해수면 상승은 기후 변화를 나타냅니다.",words:[]},
+{en:"The university library cafe is on the third floor.",ko:"대학 도서관 카페는 3층에 있습니다.",words:[]},
+{en:"Some students were absent due to the train delay.",ko:"일부 학생들은 열차 지연으로 인해 결석했습니다.",words:[]},
+{en:"The class is canceled because the professor is sick.",ko:"교수님이 아파서 수업이 취소되었습니다.",words:[]},
+{en:"We were talking about ways of committing crimes.",ko:"우리는 범죄를 저지르는 방법에 대해 이야기하고 있었습니다.",words:[]},
+{en:"We were discussing the methods used by criminals to commit crimes.",ko:"우리는 범죄자들이 범죄를 저지르는 데 사용하는 방법에 대해 논의하고 있었습니다.",words:[]},
+{en:"Maths uses numbers and shapes to solve problems.",ko:"수학은 숫자와 도형을 사용하여 문제를 해결합니다.",words:[]},
+{en:"The employment rate has steadily increased over the last year.",ko:"지난 한 해 동안 고용률은 꾸준히 증가했습니다.",words:[]},
+{en:"The professor said biology is not the only subject on the exam.",ko:"교수는 생물학만이 시험의 유일한 과목이 아니라고 말했습니다.",words:[]},
+{en:"Participants recorded their sleep hours in the journals.",ko:"참가자들은 자신의 수면 시간을 일지에 기록했습니다.",words:[]},
+{en:"Effective communication is the key to becoming a successful manager.",ko:"효과적인 커뮤니케이션은 성공적인 관리자가 되기 위한 핵심 요소입니다.",words:[]},
+{en:"Students need to register to gain access to library printers.",ko:"학생은 도서관 프린터를 사용하려면 등록해야 합니다.",words:[]},
+{en:"There will be a quiz class next week.",ko:"다음 주에 퀴즈 수업이 있을 예정입니다.",words:[]},
+{en:"Please confirm your essay topic one week before the deadline.",ko:"마감일 1주일 전에 에세이 주제를 확정해 주세요.",words:[]},
+{en:"We have been unsuccessful in finding a new manager.",ko:"새 매니저를 찾는 데 실패했습니다.",words:[]},
+{en:"The exam will not be posted until further notice.",ko:"시험은 추후 공지가 있을 때까지 게시되지 않습니다.",words:[]},
+{en:"We can all meet at my office after the lecture.",ko:"강의가 끝난 후 우리 사무실에서 모두 만날 수 있어요.",words:[]},
+{en:"The economic status of the early Roman Republic will be examined.",ko:"초기 로마 공화국의 경제 상황을 살펴볼 것입니다.",words:[]},
+{en:"Please return the reference book to the correct position on the library shelf.",ko:"참고 도서를 도서관 서가의 올바른 위치에 반납해 주세요.",words:[]},
+{en:"You can get your coffee and tea in the lounge.",ko:"라운지에서 커피와 차를 즐기실 수 있습니다.",words:[]},
+{en:"In my opinion, the car should be repaired.",ko:"제 생각에는 차를 수리해야 합니다.",words:[]},
+{en:"Summer school programs allow some students to accelerate their studies.",ko:"일부 학생들은 여름방학 프로그램을 통해 학습 속도를 높일 수 있습니다.",words:[]},
+{en:"The field of social development includes description of social behavior.",ko:"사회 발달 분야에는 사회적 행동에 대한 설명이 포함됩니다.",words:[]},
+{en:"You need to make sure that all your essays are handed in on time.",ko:"모든 에세이를 제시간에 제출해야 합니다.",words:[]},
+{en:"Application forms should be submitted in one week.",ko:"신청서는 1주일 이내에 제출해야 합니다.",words:[]}
+];// ============================================================
 // STATE
 // ============================================================
 let currentMode='fillblank',queue=[],queuePos=0,currentSentence=null;
 let wrongSet=new Set(); // tracks wrong sentence indices
 let correctCount=0,wrongCount=0,streak=0,mastered=new Set();
 let answered=false,ttsSpeed=0.7,repeatMode=false,hintVisible=false;
-let rangeStart=0,rangeEnd=205,shuffleMode=false;
+let rangeStart=0,rangeEnd=210,shuffleMode=false;
 let currentView='quiz'; // 'quiz' | 'list'
 
 // Word-meaning state
@@ -533,9 +540,9 @@ function buildQueue(){
 function applyRange(){
   const sVal=parseInt(document.getElementById('rangeStart').value);
   const eVal=parseInt(document.getElementById('rangeEnd').value);
-  // 입력값 검증: 1~206 범위로 클램프
-  const sClamp=Math.max(1,Math.min(sVal,206));
-  const eClamp=Math.max(sClamp,Math.min(eVal,206));
+  // 입력값 검증: 1~216 범위로 클램프
+  const sClamp=Math.max(1,Math.min(sVal,211));
+  const eClamp=Math.max(sClamp,Math.min(eVal,211));
   // 화면 input도 보정된 값으로 업데이트
   document.getElementById('rangeStart').value=sClamp;
   document.getElementById('rangeEnd').value=eClamp;
@@ -839,9 +846,9 @@ function retryWrong(){
 }
 function restartAll(){
   correctCount=0;wrongCount=0;streak=0;mastered.clear();wrongSet.clear();
-  rangeStart=0;rangeEnd=205;
+  rangeStart=0;rangeEnd=210;
   document.getElementById('rangeStart').value=1;
-  document.getElementById('rangeEnd').value=206;
+  document.getElementById('rangeEnd').value=216;
   updateRetryBar();buildQueue();loadCurrent();
 }
 function restartRange(){
@@ -889,7 +896,7 @@ function renderList(){
   const q=(document.getElementById('listSearch').value||'').toLowerCase().trim();
   const list=document.getElementById('sentenceList');
   document.getElementById('listMasteredChip').textContent=`완료 ${mastered.size}개`;
-  document.getElementById('listRemainChip').textContent=`남은 ${206-mastered.size}개`;
+  document.getElementById('listRemainChip').textContent=`남은 ${230-mastered.size}개`;
 
   let html='';
   SENTENCES.forEach((s,i)=>{
