@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PTE 공부 트래커</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3248;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b9d;
+    --text: #e8eaf6;
+    --text2: #8b90b0;
+    --text3: #555a7a;
+    --speaking: #6c63ff;
+    --writing: #4caf88;
+    --reading: #e06c75;
+    --listening: #e5c07b;
+    --success: #00d4aa;
+    --warn: #ffb347;
+    --radius: 10px;
+    --font: 'Noto Sans KR', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent2); }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .week-nav button {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .week-nav button:hover { background: var(--accent); border-color: var(--accent); }
+
+  .week-label {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text2);
+    min-width: 220px;
+    text-align: center;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat-card .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .stat-card .val { font-family: var(--mono); font-size: 22px; font-weight: 500; }
+  .stat-card.pct .val { color: var(--accent2); }
+  .stat-card.total .val { color: var(--accent); }
+  .stat-card.streak .val { color: var(--warn); }
+  .stat-card.today-val .val { color: var(--accent3); }
+
+  .progress-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+  }
+  .progress-bar-wrap .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+  .bar-bg {
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.5s ease;
+  }
+
+  .section-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 7px 16px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .tab-btn.active, .tab-btn:hover { color: var(--text); }
+  .tab-btn[data-skill="Speaking"].active { background: var(--speaking); border-color: var(--speaking); }
+  .tab-btn[data-skill="Writing"].active { background: var(--writing); border-color: var(--writing); }
+  .tab-btn[data-skill="Reading"].active { background: var(--reading); border-color: var(--reading); }
+  .tab-btn[data-skill="Listening"].active { background: var(--listening); border-color: var(--listening); color: #1a1d27; }
+  .tab-btn[data-skill="All"].active { background: var(--accent); border-color: var(--accent); }
+
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: var(--surface2);
+    padding: 10px 10px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text2);
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  thead th:first-child { text-align: left; padding-left: 16px; min-width: 130px; }
+  thead th.today-col { color: var(--accent2); }
+
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+
+  td {
+    padding: 7px 10px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td:first-child {
+    text-align: left;
+    padding-left: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .skill-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 7px;
+    vertical-align: middle;
+  }
+
+  .cell-input {
+    width: 50px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text);
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    appearance: none;
+    -moz-appearance: textfield;
+  }
+  .cell-input::-webkit-outer-spin-button,
+  .cell-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .cell-input:hover { border-color: var(--border); background: var(--surface2); }
+  .cell-input:focus { outline: none; border-color: var(--accent); background: var(--surface2); }
+  .cell-input.done { color: var(--accent2); }
+  .cell-input.over { color: var(--warn); }
+
+  .goal-cell {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+  }
+
+  .sum-row td {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--accent);
+    border-top: 2px solid var(--border);
+    background: var(--surface2);
+  }
+  .sum-row td:first-child { color: var(--text2); }
+
+  .goal-row { background: rgba(108,99,255,0.05); }
+  .goal-row td { color: var(--accent); font-family: var(--mono); font-size: 12px; }
+
+  .add-task-wrap {
+    margin-top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .add-task-wrap h3 { font-size: 13px; color: var(--text2); margin-bottom: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.7px; }
+
+  .add-task-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 11px; color: var(--text3); }
+  .form-group input, .form-group select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    transition: border 0.15s;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group select option { background: var(--surface2); }
+
+  .btn-add {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    transition: opacity 0.15s;
+    align-self: flex-end;
+    margin-bottom: 1px;
+  }
+  .btn-add:hover { opacity: 0.85; }
+
+  .btn-del {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .btn-del:hover { color: var(--accent3); }
+
+  .skill-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-weight: 500;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .tag-Speaking { background: rgba(108,99,255,0.25); color: #a89cff; }
+  .tag-Writing { background: rgba(76,175,136,0.25); color: #6adbb0; }
+  .tag-Reading { background: rgba(224,108,117,0.25); color: #f09aa0; }
+  .tag-Listening { background: rgba(229,192,123,0.25); color: #e5c07b; }
+
+  .today-col input { border-color: rgba(0,212,170,0.2); }
+
+  .pct-bar {
+    display: inline-block;
+    width: 36px;
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+  .pct-bar-fill { height: 100%; background: var(--accent2); border-radius: 99px; }
+
+  @media (max-width: 600px) {
+    .header { flex-direction: column; align-items: flex-start; }
+    .week-label { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">PTE<span>·</span>tracker</div>
+  <div class="week-nav">
+    <button onclick="changeWeek(-1)">← 이전</button>
+    <div class="week-label" id="weekLabel"></div>
+    <button onclick="changeWeek(1)">다음 →</button>
+  </div>
+</div>
+
+<div class="stats-row" id="statsRow"></div>
+
+<div class="progress-bar-wrap">
+  <div class="bar-label">
+    <span>주간 진행률</span>
+    <span id="barPctLabel">0%</span>
+  </div>
+  <div class="bar-bg"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+</div>
+
+<div class="section-tabs" id="tabs"></div>
+<div class="table-wrap"><table id="mainTable"></table></div>
+
+<div class="add-task-wrap">
+  <h3>+ 태스크 추가</h3>
+  <div class="add-task-form">
+    <div class="form-group">
+      <label>태스크 이름</label>
+      <input id="newName" type="text" placeholder="예: SWT" maxlength="20" style="width:130px">
+    </div>
+    <div class="form-group">
+      <label>스킬</label>
+      <select id="newSkill">
+        <option>Speaking</option>
+        <option>Writing</option>
+        <option>Reading</option>
+        <option>Listening</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>일일 목표 (문항수)</label>
+      <input id="newGoal" type="number" min="0" max="999" value="10" style="width:90px">
+    </div>
+    <button class="btn-add" onclick="addTask()">추가</button>
+  </div>
+</div>
+
+<script>
+const SKILL_COLORS = { Speaking:'#6c63ff', Writing:'#4caf88', Reading:'#e06c75', Listening:'#e5c07b' };
+
+const DEFAULT_TASKS = [
+  { id:'RA', name:'RA', skill:'Speaking', goal:10 },
+  { id:'RS', name:'RS', skill:'Speaking', goal:30 },
+  { id:'DI', name:'DI', skill:'Speaking', goal:5 },
+  { id:'RL', name:'RL', skill:'Speaking', goal:5 },
+  { id:'ASQ', name:'ASQ', skill:'Speaking', goal:0 },
+  { id:'SGD', name:'SGD', skill:'Speaking', goal:0 },
+  { id:'RTS', name:'RTS', skill:'Speaking', goal:0 },
+  { id:'SWT', name:'SWT', skill:'Writing', goal:5 },
+  { id:'WE', name:'WE', skill:'Writing', goal:3 },
+  { id:'FIB_DD', name:'FIB(Dropdown)', skill:'Reading', goal:10 },
+  { id:'MC_Multi_R', name:'MC(Multiple)', skill:'Reading', goal:0 },
+  { id:'RO', name:'RO', skill:'Reading', goal:10 },
+  { id:'FIB_Drag', name:'FIB(Drag&Drop)', skill:'Reading', goal:10 },
+  { id:'MC_Single_R', name:'MC(Single)', skill:'Reading', goal:0 },
+  { id:'SST', name:'SST', skill:'Listening', goal:5 },
+  { id:'MC_Multi_L', name:'MC(Multiple)', skill:'Listening', goal:0 },
+  { id:'FIB_L', name:'FIB', skill:'Listening', goal:10 },
+  { id:'HCS', name:'HCS', skill:'Listening', goal:0 },
+  { id:'MC_Single_L', name:'MC(Single)', skill:'Listening', goal:0 },
+  { id:'SMW', name:'SMW', skill:'Listening', goal:0 },
+  { id:'HIW', name:'HIW', skill:'Listening', goal:10 },
+  { id:'WFD', name:'WFD', skill:'Listening', goal:20 },
+];
+
+function loadTasks() {
+  const s = localStorage.getItem('pte_tasks');
+  return s ? JSON.parse(s) : DEFAULT_TASKS.map(t => ({...t}));
+}
+function saveTasks(t) { localStorage.setItem('pte_tasks', JSON.stringify(t)); }
+
+function getWeekKey(offset) {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+  const mon = new Date(now.setDate(diff + offset * 7));
+  return mon.toISOString().slice(0,10);
+}
+
+function getWeekDays(weekKey) {
+  const mon = new Date(weekKey);
+  return Array.from({length:7}, (_,i) => {
+    const d = new Date(mon); d.setDate(d.getDate()+i);
+    return d.toISOString().slice(0,10);
+  });
+}
+
+function loadData(weekKey) {
+  const s = localStorage.getItem('pte_data_'+weekKey);
+  return s ? JSON.parse(s) : {};
+}
+function saveData(weekKey, data) { localStorage.setItem('pte_data_'+weekKey, JSON.stringify(data)); }
+
+let currentOffset = 0;
+let currentFilter = 'All';
+
+function getToday() { return new Date().toISOString().slice(0,10); }
+
+const DAY_KR = ['월','화','수','목','금','토','일'];
+
+function render() {
+  const weekKey = getWeekKey(currentOffset);
+  const days = getWeekDays(weekKey);
+  const today = getToday();
+  const tasks = loadTasks();
+  const data = loadData(weekKey);
+
+  document.getElementById('weekLabel').textContent =
+    days[0].slice(5).replace('-','/') + ' — ' + days[6].slice(5).replace('-','/');
+
+  const filteredTasks = currentFilter === 'All' ? tasks : tasks.filter(t => t.skill === currentFilter);
+
+  renderTabs(tasks);
+  renderStats(tasks, days, today, data);
+  renderTable(filteredTasks, tasks, days, today, data, weekKey);
+}
+
+function renderTabs(tasks) {
+  const skills = ['All', 'Speaking', 'Writing', 'Reading', 'Listening'];
+  const el = document.getElementById('tabs');
+  el.innerHTML = skills.map(s => `
+    <button class="tab-btn ${currentFilter===s?'active':''}" data-skill="${s}" onclick="setFilter('${s}')">${s}</button>
+  `).join('');
+}
+
+function setFilter(f) { currentFilter = f; render(); }
+
+function renderStats(tasks, days, today, data) {
+  let weekGoal = 0, weekDone = 0, todayDone = 0;
+  const activeDays = days.filter(d => d <= today).length;
+
+  tasks.forEach(t => {
+    if(t.goal > 0) {
+      weekGoal += t.goal * 7;
+      days.forEach(d => {
+        const v = parseInt((data[t.id]||{})[d]||0);
+        weekDone += v;
+        if(d === today) todayDone += v;
+      });
+    }
+  });
+
+  const pct = weekGoal > 0 ? Math.round(weekDone / weekGoal * 100) : 0;
+  document.getElementById('barFill').style.width = Math.min(pct,100)+'%';
+  document.getElementById('barPctLabel').textContent = pct+'%';
+
+  const todayGoal = tasks.reduce((s,t)=>s+t.goal,0);
+  const streak = calcStreak(tasks);
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card total"><div class="label">주간 합계</div><div class="val">${weekDone}</div></div>
+    <div class="stat-card pct"><div class="label">달성률</div><div class="val">${pct}%</div></div>
+    <div class="stat-card today-val"><div class="label">오늘 완료</div><div class="val">${todayDone}<span style="font-size:12px;color:var(--text3)">/${todayGoal}</span></div></div>
+    <div class="stat-card streak"><div class="label">연속 달성</div><div class="val">${streak}일</div></div>
+  `;
+}
+
+function calcStreak(tasks) {
+  let streak = 0;
+  const today = getToday();
+  for(let i = 0; i < 90; i++) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const dk = d.toISOString().slice(0,10);
+    const wk = getWeekKeyForDate(dk);
+    const data = loadData(wk);
+    const total = tasks.filter(t=>t.goal>0).reduce((s,t)=>s+parseInt((data[t.id]||{})[dk]||0),0);
+    const goal = tasks.filter(t=>t.goal>0).reduce((s,t)=>s+t.goal,0);
+    if(total >= goal * 0.8) streak++;
+    else if(i > 0) break;
+  }
+  return streak;
+}
+
+function getWeekKeyForDate(dateStr) {
+  const d = new Date(dateStr);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const mon = new Date(d); mon.setDate(diff);
+  return mon.toISOString().slice(0,10);
+}
+
+function renderTable(filteredTasks, allTasks, days, today, data, weekKey) {
+  const table = document.getElementById('mainTable');
+
+  const thead = `<thead><tr>
+    <th>태스크</th>
+    ${days.map((d,i)=>{
+      const isTd = d===today;
+      return `<th class="${isTd?'today-col':''}">${DAY_KR[i]}<br><span style="font-family:var(--mono);font-size:10px;font-weight:400">${d.slice(5)}</span></th>`;
+    }).join('')}
+    <th>일일 목표</th>
+    <th>주간 달성</th>
+    <th></th>
+  </tr></thead>`;
+
+  let tbody = '<tbody>';
+  filteredTasks.forEach(t => {
+    const color = SKILL_COLORS[t.skill];
+    let weekSum = 0;
+    const cells = days.map(d => {
+      const v = (data[t.id]||{})[d] !== undefined ? (data[t.id]||{})[d] : '';
+      if(v !== '') weekSum += parseInt(v)||0;
+      const isTd = d===today;
+      const done = t.goal > 0 && parseInt(v||0) >= t.goal;
+      const over = t.goal > 0 && parseInt(v||0) > t.goal;
+      return `<td class="${isTd?'today-col':''}">
+        <input type="number" min="0" class="cell-input${done?' done':''}${over?' over':''}"
+          value="${v}" placeholder="—"
+          onchange="updateCell('${weekKey}','${t.id}','${d}',this.value,this)"
+          oninput="colorInput(this,${t.goal})">
+      </td>`;
+    });
+
+    const pct = t.goal > 0 ? Math.min(Math.round(weekSum/(t.goal*7)*100),100) : 0;
+    tbody += `<tr>
+      <td>
+        <span class="skill-dot" style="background:${color}"></span>
+        ${t.name}
+        <span class="skill-tag tag-${t.skill}">${t.skill.slice(0,3)}</span>
+      </td>
+      ${cells.join('')}
+      <td class="goal-cell">${t.goal||'—'}</td>
+      <td><span style="font-family:var(--mono);font-size:12px;color:var(--accent2)">${weekSum}</span><span class="pct-bar"><span class="pct-bar-fill" style="width:${pct}%"></span></span></td>
+      <td><button class="btn-del" onclick="deleteTask('${t.id}')" title="삭제">✕</button></td>
+    </tr>`;
+  });
+
+  // SUM row
+  const colSums = days.map(d => {
+    return allTasks.reduce((s,t)=>s+parseInt(((data[t.id]||{})[d])||0),0);
+  });
+  const totalSum = colSums.reduce((a,b)=>a+b,0);
+  tbody += `<tr class="sum-row">
+    <td>SUM</td>
+    ${colSums.map((v,i)=>`<td class="${days[i]===today?'today-col':''}">${v||''}</td>`).join('')}
+    <td>${allTasks.reduce((s,t)=>s+t.goal,0)}</td>
+    <td style="color:var(--accent)">${totalSum}</td>
+    <td></td>
+  </tr>`;
+
+  tbody += '</tbody>';
+  table.innerHTML = thead + tbody;
+}
+
+function colorInput(el, goal) {
+  const v = parseInt(el.value)||0;
+  el.classList.remove('done','over');
+  if(goal > 0 && v >= goal) el.classList.add(v > goal ? 'over' : 'done');
+}
+
+function updateCell(weekKey, taskId, date, val, el) {
+  const data = loadData(weekKey);
+  if(!data[taskId]) data[taskId] = {};
+  const n = parseInt(val);
+  data[taskId][date] = isNaN(n) ? '' : n;
+  saveData(weekKey, data);
+  const tasks = loadTasks();
+  const task = tasks.find(t=>t.id===taskId);
+  if(task) colorInput(el, task.goal);
+  renderStats(tasks, getWeekDays(weekKey), getToday(), data);
+  updateBarOnly(tasks, getWeekDays(weekKey), data);
+}
+
+function updateBarOnly(tasks, days, data) {
+  let weekGoal = 0, weekDone = 0;
+  tasks.forEach(t => {
+    if(t.goal > 0) {
+      weekGoal += t.goal * 7;
+      days.forEach(d => { weekDone += parseInt((data[t.id]||{})[d]||0); });
+    }
+  });
+  const pct = weekGoal > 0 ? Math.round(weekDone/weekGoal*100) : 0;
+  document.getElementById('barFill').style.width = Math.min(pct,100)+'%';
+  document.getElementById('barPctLabel').textContent = pct+'%';
+}
+
+function addTask() {
+  const name = document.getElementById('newName').value.trim();
+  const skill = document.getElementById('newSkill').value;
+  const goal = parseInt(document.getElementById('newGoal').value)||0;
+  if(!name) { alert('태스크 이름을 입력해주세요'); return; }
+  const tasks = loadTasks();
+  const id = name + '_' + Date.now();
+  tasks.push({ id, name, skill, goal });
+  saveTasks(tasks);
+  document.getElementById('newName').value = '';
+  render();
+}
+
+function deleteTask(id) {
+  if(!confirm('이 태스크를 삭제할까요?')) return;
+  const tasks = loadTasks().filter(t => t.id !== id);
+  saveTasks(tasks);
+  render();
+}
+
+function changeWeek(dir) { currentOffset += dir; render(); }
+
+render();
+</script>
+</body>
+</html>
